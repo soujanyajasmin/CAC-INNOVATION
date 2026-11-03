@@ -1,0 +1,441 @@
+{% extends "base.html" %}
+
+{% block title %}Project Manager Console | CTRL ALT CRAC INNOVATIONS{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: 3rem;">
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <span class="badge badge-purple">Project Management & Delivery</span>
+          <span class="badge badge-cyan">{{ user.department or 'Engineering Delivery' }}</span>
+        </div>
+        <h2 style="font-size: 2rem; color: #fff; margin-top: 0.25rem;">Manager Workspace: {{ user.full_name }}</h2>
+        <p style="color: var(--text-muted); font-size: 0.88rem;">Planning, task allocation, code review, and delivery governance.</p>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem;">
+        <button onclick="document.getElementById('assignTaskSection').scrollIntoView({behavior: 'smooth'})" class="btn btn-primary btn-sm">
+          + Assign New Task
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Telemetry Stats -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+      <div class="card" style="padding: 1.25rem; border-color: rgba(251, 191, 36, 0.4);">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Assigned Clients</div>
+        <div style="font-size: 1.8rem; font-weight: 800; color: #fbbf24; margin: 0.25rem 0;">{{ clients|length }}</div>
+        <div style="font-size: 0.75rem; color: #fbbf24;">Accounts assigned by Admin</div>
+      </div>
+
+      <div class="card" style="padding: 1.25rem;">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Active Projects</div>
+        <div style="font-size: 1.8rem; font-weight: 800; color: #a78bfa; margin: 0.25rem 0;">{{ projects|length }}</div>
+        <div style="font-size: 0.75rem; color: #34d399;">Milestones tracked for delivery</div>
+      </div>
+
+      <div class="card" style="padding: 1.25rem; border-color: {% if tasks_waiting_review %}rgba(245, 158, 11, 0.4){% else %}var(--border-color){% endif %};">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Awaiting Quality Review</div>
+        <div style="font-size: 1.8rem; font-weight: 800; color: #f59e0b; margin: 0.25rem 0;">{{ tasks_waiting_review|length }}</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">Developer & Intern PRs ready</div>
+      </div>
+
+      <div class="card" style="padding: 1.25rem;">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Team Capacity</div>
+        <div style="font-size: 1.8rem; font-weight: 800; color: #22d3ee; margin: 0.25rem 0;">{{ employees|length + interns|length }}</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ employees|length }} Developers • {{ interns|length }} Interns</div>
+      </div>
+    </div>
+
+    <!-- Section: My Assigned Clients (Designated by Admin) -->
+    <div class="card" style="margin-bottom: 2.5rem; border-color: rgba(251, 191, 36, 0.35);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <h3 style="font-size: 1.3rem; color: #fff;">My Assigned Clients (Account Management)</h3>
+            <span class="badge badge-amber">{{ clients|length }} Assigned</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">
+            Enterprise clients assigned to you by Admin. Oversee project roadmaps, client communications, and sprint deliveries.
+          </p>
+        </div>
+        <a href="#assignTaskSection" class="btn btn-primary btn-sm">+ Assign Task to Developer / Intern</a>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Client Organization</th>
+              <th>Industry & Tier</th>
+              <th>Primary Contact</th>
+              <th>Active Projects</th>
+              <th>Status</th>
+              <th>Quick Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in clients %}
+            <tr>
+              <td>
+                <div style="font-weight: 700; color: #fff;">{{ c.name }}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;">Code: {{ c.code }}</div>
+              </td>
+              <td>
+                <div style="color: #e2e8f0;">{{ c.industry or 'Technology' }}</div>
+                <span class="badge badge-purple" style="font-size: 0.65rem;">{{ c.tier or 'Enterprise' }}</span>
+              </td>
+              <td>
+                <div style="color: #e2e8f0; font-size: 0.85rem;">{{ c.primary_contact_name or 'N/A' }}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">{{ c.primary_contact_email or '' }}</div>
+              </td>
+              <td>
+                <span class="badge badge-cyan">{{ c.projects|length }} Projects</span>
+              </td>
+              <td>
+                <span class="badge badge-green" style="font-size: 0.7rem;">● Assigned to You</span>
+              </td>
+              <td>
+                <a href="#assignTaskSection" class="btn btn-secondary btn-sm" style="font-size: 0.75rem; color: #22d3ee; border-color: rgba(6, 182, 212, 0.4);">
+                  Assign Task &rarr;
+                </a>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">
+                No client accounts currently assigned to you by Admin.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section: Tasks Awaiting Manager Review -->
+    {% if tasks_waiting_review %}
+    <div class="card" style="margin-bottom: 2.5rem; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.04);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div>
+          <span class="badge badge-amber" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">Action Required</span>
+          <h3 style="font-size: 1.3rem; color: #fff; margin-top: 0.35rem;">Tasks Submitted For Quality Review</h3>
+        </div>
+        <span class="badge badge-purple">{{ tasks_waiting_review|length }} Pending</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Task</th>
+              <th>Assignee</th>
+              <th>GitHub Pull Request</th>
+              <th>Submission Notes</th>
+              <th>Review Decision</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in tasks_waiting_review %}
+            <tr>
+              <td>
+                <div style="font-weight: 600; color: #fff;">{{ t.title }}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Project #{{ t.project_id }} | Priority: {{ t.priority }}</div>
+              </td>
+              <td>
+                <div style="color: #22d3ee; font-weight: 500;">{{ t.assigned_to.full_name if t.assigned_to else 'Unassigned' }}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">{{ t.assigned_to.role.name if t.assigned_to else '' }}</div>
+              </td>
+              <td>
+                {% if t.pr_url %}
+                <a href="{{ t.pr_url }}" target="_blank" style="color: #a78bfa; font-size: 0.82rem; text-decoration: underline;">
+                  View PR on GitHub &rarr;
+                </a>
+                {% else %}
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Branch: {{ t.branch_name or 'main' }}</span>
+                {% endif %}
+              </td>
+              <td style="font-size: 0.82rem; color: #e2e8f0; max-width: 240px;">
+                {{ t.submission_notes or 'No notes provided.' }}
+              </td>
+              <td>
+                <div style="display: flex; gap: 0.4rem;">
+                  <button class="btn btn-primary btn-sm" onclick="handleTaskDecision({{ t.id }}, 'Approved')">
+                    ✓ Approve
+                  </button>
+                  <button class="btn btn-secondary btn-sm" onclick="handleTaskDecision({{ t.id }}, 'Changes Requested')" style="border-color: rgba(239, 68, 68, 0.4); color: #fca5a5;">
+                    Request Changes
+                  </button>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Section: Assign Task & AI Project Planner -->
+    <div class="grid-2" style="margin-bottom: 2.5rem; align-items: start;">
+      <!-- Assign Task Form -->
+      <div class="card" id="assignTaskSection">
+        <h3 style="font-size: 1.3rem; color: #fff; margin-bottom: 1rem;">Assign New Development Task</h3>
+        <form onsubmit="handleAssignTask(event)">
+          <div class="form-group">
+            <label class="form-label">Target Project *</label>
+            <select id="taskProjectId" class="form-select" required>
+              {% for p in projects %}
+              <option value="{{ p.id }}">{{ p.title }} (Client: {{ p.client.name }})</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Task Title *</label>
+            <input type="text" id="taskTitle" class="form-control" required placeholder="e.g. Build DICOM metadata extraction script" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Task Description & Acceptance Criteria *</label>
+            <textarea id="taskDesc" class="form-control" required placeholder="Describe technical scope, required unit test coverage, and documentation expectations..."></textarea>
+          </div>
+
+          <div style="margin-bottom: 1rem;">
+            <label class="form-label">Assignee Target Role *</label>
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <button type="button" id="roleBtnAll" class="btn btn-secondary btn-sm" style="font-size: 0.75rem; border-color: var(--secondary-cyan); color: #22d3ee;" onclick="filterAssigneeGroup('all')">All Team</button>
+              <button type="button" id="roleBtnDev" class="btn btn-secondary btn-sm" style="font-size: 0.75rem;" onclick="filterAssigneeGroup('dev')">💻 Developers ({{ employees|length }})</button>
+              <button type="button" id="roleBtnIntern" class="btn btn-secondary btn-sm" style="font-size: 0.75rem;" onclick="filterAssigneeGroup('intern')">🎓 Interns ({{ interns|length }})</button>
+            </div>
+            <select id="taskAssigneeId" class="form-select" required>
+              <option value="">-- Choose Developer or Intern --</option>
+              <optgroup label="💻 Software Developers & Engineers" id="devOptGroup">
+                {% for emp in employees %}
+                <option value="{{ emp.id }}" data-group="dev">{{ emp.full_name }} — {{ emp.title or 'Developer' }} {% if emp.skills_json and emp.skills_json != '[]' %}[{{ emp.skills_json|from_json|join(', ') }}]{% endif %}</option>
+                {% endfor %}
+              </optgroup>
+              <optgroup label="🎓 Interns" id="internOptGroup">
+                {% for intern in interns %}
+                <option value="{{ intern.id }}" data-group="intern">{{ intern.full_name }} — Intern ({{ intern.title or intern.department or 'General' }})</option>
+                {% endfor %}
+              </optgroup>
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Priority Level</label>
+              <select id="taskPriority" class="form-select">
+                <option value="Critical">Critical</option>
+                <option value="High">High</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">GitHub Repository URL (Optional)</label>
+              <input type="url" id="taskRepoUrl" class="form-control" placeholder="https://github.com/cac-innovations/project-repo" />
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%;">
+            Dispatch Task & Send In-App Notification &rarr;
+          </button>
+        </form>
+      </div>
+
+      <!-- AI Project Planner & Task Breakdown Copilot -->
+      <div class="card" style="border-color: var(--border-glow);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <span class="badge badge-cyan">Manager AI Copilot</span>
+          <span class="badge badge-purple">LangGraph Ready</span>
+        </div>
+        <h3 style="font-size: 1.3rem; color: #fff; margin-bottom: 0.5rem;">AI Sprint & Task Breakdown Generator</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; margin-bottom: 1rem;">
+          Paste a raw client feature request. The AI Planner will suggest milestones, dependencies, and employee/intern allocations.
+        </p>
+
+        <div class="form-group">
+          <textarea id="aiPlanPrompt" class="form-control" style="min-height: 80px;" placeholder="e.g. Build automated financial document extraction and anti-fraud scoring pipeline..."></textarea>
+        </div>
+        <button type="button" class="btn btn-cyan btn-sm" onclick="runAiPlanner()" style="width: 100%;">
+          ⚡ Generate Sprint Plan & Allocations
+        </button>
+
+        <div id="aiPlanOutput" style="display: none; background: rgba(7, 9, 14, 0.9); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-top: 1rem; font-size: 0.85rem; color: #f1f5f9; line-height: 1.6; white-space: pre-wrap;"></div>
+      </div>
+    </div>
+
+    <!-- Section: All Project Tasks Overview -->
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div>
+          <h3 style="font-size: 1.3rem; color: #fff;">Sprint Task Matrix</h3>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">All active development work across projects</p>
+        </div>
+        <span class="badge badge-purple">{{ all_tasks|length }} Total Tasks</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Task</th>
+              <th>Assignee</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Review / Approval</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in all_tasks %}
+            <tr>
+              <td>
+                <div style="font-weight: 600; color: #fff;">{{ t.title }}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">{{ t.project.title if t.project else 'N/A' }}</div>
+              </td>
+              <td>
+                <div style="color: #22d3ee; font-size: 0.88rem; font-weight: 600;">{{ t.assigned_to.full_name if t.assigned_to else 'Unassigned' }}</div>
+                <div style="display: flex; align-items: center; gap: 0.35rem; margin-top: 0.2rem;">
+                  {% if t.assigned_to and t.assigned_to.role.name == 'intern' %}
+                    <span class="badge badge-green" style="font-size: 0.62rem;">🎓 Intern</span>
+                  {% elif t.assigned_to and t.assigned_to.role.name == 'employee' %}
+                    <span class="badge badge-cyan" style="font-size: 0.62rem;">💻 Developer</span>
+                  {% endif %}
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">{{ t.assigned_to.title or '' if t.assigned_to else '' }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="badge {% if t.priority == 'Critical' %}badge-amber{% elif t.priority == 'High' %}badge-purple{% else %}badge-cyan{% endif %}" style="font-size: 0.65rem;">
+                  {{ t.priority }}
+                </span>
+              </td>
+              <td>
+                <span class="badge {% if t.status in ['Approved', 'Completed'] %}badge-green{% elif t.status == 'Under Review' %}badge-amber{% elif t.status == 'Changes Requested' %}badge-purple{% else %}badge-cyan{% endif %}" style="font-size: 0.65rem;">
+                  {{ t.status }}
+                </span>
+              </td>
+              <td style="font-size: 0.82rem; color: var(--text-muted);">
+                {% if t.status in ['Approved', 'Completed'] %}
+                  ✓ Approved by {{ t.approved_by.full_name if t.approved_by else 'Manager' }}
+                {% elif t.status == 'Under Review' %}
+                  <a href="#reviews" style="color: #fbbf24;">Review Required &rarr;</a>
+                {% else %}
+                  In progress
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function filterAssigneeGroup(group) {
+  const devGroup = document.getElementById("devOptGroup");
+  const internGroup = document.getElementById("internOptGroup");
+  const btnAll = document.getElementById("roleBtnAll");
+  const btnDev = document.getElementById("roleBtnDev");
+  const btnIntern = document.getElementById("roleBtnIntern");
+
+  // Reset button borders
+  [btnAll, btnDev, btnIntern].forEach(b => {
+    b.style.borderColor = "var(--border-color)";
+    b.style.color = "var(--text-muted)";
+  });
+
+  if (group === 'dev') {
+    devGroup.style.display = "";
+    internGroup.style.display = "none";
+    btnDev.style.borderColor = "var(--secondary-cyan)";
+    btnDev.style.color = "#22d3ee";
+  } else if (group === 'intern') {
+    devGroup.style.display = "none";
+    internGroup.style.display = "";
+    btnIntern.style.borderColor = "#34d399";
+    btnIntern.style.color = "#34d399";
+  } else {
+    devGroup.style.display = "";
+    internGroup.style.display = "";
+    btnAll.style.borderColor = "var(--secondary-cyan)";
+    btnAll.style.color = "#22d3ee";
+  }
+}
+
+async function handleAssignTask(e) {
+  e.preventDefault();
+  const project_id = parseInt(document.getElementById("taskProjectId").value);
+  const title = document.getElementById("taskTitle").value.trim();
+  const description = document.getElementById("taskDesc").value.trim();
+  const assigned_to_id = parseInt(document.getElementById("taskAssigneeId").value);
+  const priority = document.getElementById("taskPriority").value;
+  const repo_url = document.getElementById("taskRepoUrl").value.trim() || null;
+
+  try {
+    const res = await fetch("/api/v1/projects/tasks", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ project_id, title, description, assigned_to_id, priority, repo_url })
+    });
+    if (res.ok) {
+      showToast("Task assigned successfully! Notification dispatched.");
+      setTimeout(() => location.reload(), 700);
+    } else {
+      showToast("Failed to assign task", "error");
+    }
+  } catch(err) {
+    showToast("Network error creating task", "error");
+  }
+}
+
+async function handleTaskDecision(taskId, decision) {
+  const feedback = prompt(`Enter feedback for ${decision}:`, decision === "Approved" ? "Code verified and merged." : "Please add unit tests and handle null safety.");
+  if (feedback === null) return;
+
+  try {
+    const res = await fetch(`/api/v1/projects/tasks/${taskId}/review`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: decision, review_feedback: feedback })
+    });
+    if (res.ok) {
+      showToast(`Task #${taskId} marked as ${decision}!`);
+      setTimeout(() => location.reload(), 700);
+    } else {
+      showToast("Error updating task review", "error");
+    }
+  } catch(e) {
+    showToast("Network error", "error");
+  }
+}
+
+async function runAiPlanner() {
+  const prompt = document.getElementById("aiPlanPrompt").value.trim();
+  if (!prompt) return;
+  const out = document.getElementById("aiPlanOutput");
+  out.style.display = "block";
+  out.innerText = "Analyzing requirements and generating dependency graph...";
+
+  try {
+    const res = await fetch("/api/v1/agents/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: prompt, agent_code: "project_planner" })
+    });
+    const data = await res.json();
+    out.innerText = data.reply;
+  } catch(e) {
+    out.innerText = "Error invoking AI Project Planner.";
+  }
+}
+</script>
+{% endblock %}

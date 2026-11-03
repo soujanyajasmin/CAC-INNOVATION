@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}About Us | CTRL ALT CRAC INNOVATIONS (CAC INNOVATION){% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: 4rem;">
+  <div class="container">
+    <div class="section-header">
+      <div style="display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 0.5rem;">
+        <span class="badge badge-purple">Company Overview</span>
+        <span class="badge badge-green">Started in 2021</span>
+      </div>
+      <h2>Engineering the Future of Applied AI</h2>
+      <p>Started in 2021, building reliable, verifiable, and secure intelligent systems that transform operations.</p>
+    </div>
+
+    <div class="grid-2" style="margin-bottom: 4rem; align-items: center;">
+      <div>
+        <h3 style="font-size: 1.8rem; margin-bottom: 1rem; color: #fff;">Our Mission & Journey Since 2021</h3>
+        <p style="color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.8;">
+          Founded and started in <strong>2021</strong>, <strong>CTRL ALT CRAC INNOVATIONS (CAC INNOVATION)</strong> was born to bridge the divide between theoretical AI research and robust enterprise production software. For over five years, we have rejected hallucination-prone shortcuts in favor of structured architectures, tenant-isolated knowledge systems, and measurable ROI.
+        </p>
+        <p style="color: var(--text-muted); line-height: 1.8;">
+          Our core positioning is straightforward: <em>"We design and deliver practical AI-powered applications, intelligent agents, and automation systems that help organizations improve customer experience, streamline operations, and make better use of their data."</em>
+        </p>
+      </div>
+
+      <div class="card" style="border-color: var(--border-glow);">
+        <h4 style="color: var(--secondary-cyan); margin-bottom: 0.75rem;">Core Delivery Principles</h4>
+        <ul class="card-deliverables" style="font-size: 0.95rem;">
+          <li><strong>Outcomes Over Hype:</strong> Every system solves a documented operational bottleneck.</li>
+          <li><strong>Zero Hallucination Tolerance:</strong> Strict retrieval boundaries with citation attribution.</li>
+          <li><strong>Tenant Boundary Isolation:</strong> Separate cryptographic data scopes per client.</li>
+          <li><strong>Human-in-the-Loop Oversight:</strong> Consequential actions require operator confirmation.</li>
+          <li><strong>Modern Microservice Stack:</strong> Powered by high-speed FastAPI, SQLite3, and PostgreSQL migration pathways.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 4-Stage Delivery Process -->
+    <div class="section-header" style="margin-top: 5rem;">
+      <span class="badge badge-cyan">Methodology</span>
+      <h2>Our 4-Stage Delivery Framework</h2>
+      <p>A rigorous engineering process ensuring on-time and audited software rollout.</p>
+    </div>
+
+    <div class="grid-2" style="gap: 1.5rem;">
+      <div class="card">
+        <span class="badge badge-purple" style="margin-bottom: 0.75rem;">Stage 01</span>
+        <h3 class="card-title">Discovery & Feasibility Proof</h3>
+        <p class="card-text">
+          We analyze your unstructured data, existing schema, and technical compliance boundaries. We produce a validated architecture blueprint and feasibility benchmark before any contractual lock-in.
+        </p>
+      </div>
+
+      <div class="card">
+        <span class="badge badge-cyan" style="margin-bottom: 0.75rem;">Stage 02</span>
+        <h3 class="card-title">Prototyping & Pipeline Engineering</h3>
+        <p class="card-text">
+          We train domain models, build chunking algorithms, configure guardrailed agents, and connect them via FastAPI endpoints with test harness suites.
+        </p>
+      </div>
+
+      <div class="card">
+        <span class="badge badge-purple" style="margin-bottom: 0.75rem;">Stage 03</span>
+        <h3 class="card-title">Security & Tenant Verification</h3>
+        <p class="card-text">
+          Independent verification of role-based permissions, prompt injection resilience, load limits, and cross-tenant leakage prevention across all queries.
+        </p>
+      </div>
+
+      <div class="card">
+        <span class="badge badge-cyan" style="margin-bottom: 0.75rem;">Stage 04</span>
+        <h3 class="card-title">Production Deployment & Telemetry</h3>
+        <p class="card-text">
+          Containerized rollout, real-time latency monitoring, automated drift detection, and dedicated engineer handover support.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

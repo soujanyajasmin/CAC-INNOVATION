@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Contact & Request a Quote | CTRL ALT CRAC INNOVATIONS{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge badge-purple">Contact & Consultation</span>
+      <h2>Start Your AI Initiative</h2>
+      <p>Submit your operational challenge. We review, qualify, and provide initial feasibility guidance within 24 business hours.</p>
+    </div>
+
+    <div class="grid-2" style="align-items: start;">
+      <div>
+        <div class="card" style="margin-bottom: 2rem;">
+          <h3 style="font-size: 1.3rem; color: #fff; margin-bottom: 1rem;">Direct Inquiries</h3>
+          
+          <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <div style="display: flex; gap: 1rem; align-items: center;">
+              <div class="card-icon" style="width: 42px; height: 42px; margin-bottom: 0; font-size: 1.1rem;">📍</div>
+              <div>
+                <div style="font-weight: 700; color: #fff; font-size: 0.92rem;">Engineering Headquarters</div>
+                <div style="color: var(--text-muted); font-size: 0.85rem;">Global Technology & AI Innovation Campus</div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; align-items: center;">
+              <div class="card-icon" style="width: 42px; height: 42px; margin-bottom: 0; font-size: 1.1rem;">📧</div>
+              <div>
+                <div style="font-weight: 700; color: #fff; font-size: 0.92rem;">Direct Electronic Mail</div>
+                <div style="color: var(--text-muted); font-size: 0.85rem;">contact@cac-innovations.com</div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; align-items: center;">
+              <div class="card-icon" style="width: 42px; height: 42px; margin-bottom: 0; font-size: 1.1rem;">⚡</div>
+              <div>
+                <div style="font-weight: 700; color: #fff; font-size: 0.92rem;">Expected Response SLA</div>
+                <div style="color: var(--text-muted); font-size: 0.85rem;">Under 24 hours with dedicated Solution Architect review</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="border-color: rgba(6, 182, 212, 0.3);">
+          <h4 style="color: var(--secondary-cyan); margin-bottom: 0.5rem; font-size: 1rem;">Have a Question Right Now?</h4>
+          <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1rem;">
+            You can chat with our automated AI Assistant anytime using the bottom-right widget to receive preliminary budget estimates and capability checks.
+          </p>
+          <button onclick="document.getElementById('cacChatToggle').click()" class="btn btn-secondary btn-sm" style="width: 100%;">
+            Open AI Assistant &rarr;
+          </button>
+        </div>
+      </div>
+
+      <div class="card" style="border-color: var(--border-glow);">
+        <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 1.25rem;">Project Consultation Brief</h3>
+        
+        <form id="cac-enquiry-form">
+          <div class="form-group">
+            <label class="form-label">Full Name *</label>
+            <input type="text" name="name" class="form-control" required placeholder="Marcus Vance" />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Email Address *</label>
+              <input type="email" name="email" class="form-control" required placeholder="marcus@enterprise.com" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Organization Name</label>
+              <input type="text" name="company" class="form-control" placeholder="Acme Logistics" />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Industry</label>
+              <select name="industry" class="form-select">
+                <option value="Healthcare">Healthcare & Life Sciences</option>
+                <option value="Finance">Finance & Banking</option>
+                <option value="Education">Education & EdTech</option>
+                <option value="Agriculture">Agriculture & AgriTech</option>
+                <option value="Retail">Retail & E-Commerce</option>
+                <option value="Manufacturing">Manufacturing & Industry 4.0</option>
+                <option value="Cybersecurity">Cyber Security & Defense</option>
+                <option value="Other">Other / Technology</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Service Interest</label>
+              <select name="service_interest" class="form-select">
+                {% for s in services %}
+                <option value="{{ s.title }}">{{ s.title }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Budget Range</label>
+              <select name="budget" class="form-select">
+                <option value="Under $5k">Under $5,000</option>
+                <option value="$5k - $15k">$5,000 - $15,000</option>
+                <option value="$15k - $30k">$15,000 - $30,000</option>
+                <option value="$30k - $75k">$30,000 - $75,000</option>
+                <option value="$75k+">$75,000+</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Desired Timeline</label>
+              <select name="timeline" class="form-select">
+                <option value="Immediate (1-2 weeks)">Immediate (1-2 weeks)</option>
+                <option value="1 month">1 month</option>
+                <option value="2-3 months">2-3 months</option>
+                <option value="Exploring Feasibility">Exploring Feasibility</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Brief Description of Objectives & Systems *</label>
+            <textarea name="message" class="form-control" required placeholder="Describe your data formats, internal software integrations, and target business outcome..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%;">
+            Submit Requirements For Analysis &rarr;
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

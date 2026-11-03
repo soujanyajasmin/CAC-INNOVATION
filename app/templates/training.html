@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Research, Training & Internships | CTRL ALT CRAC INNOVATIONS{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge badge-purple">Engineering Fellowship</span>
+      <h2>5-Track Applied AI Talent Development</h2>
+      <p>Building production-ready software engineers through hands-on enterprise AI development, code reviews, and structured rubrics.</p>
+    </div>
+
+    <!-- 5 Track Grid -->
+    <div class="grid-3" style="margin-bottom: 4rem;">
+      <div class="card pillar-card">
+        <span class="badge badge-purple" style="margin-bottom: 0.75rem;">Track 01</span>
+        <h3 class="card-title">UI & Web Integration</h3>
+        <p class="card-text">
+          Frontend architecture, responsive Jinja2 component libraries, real-time WebSocket/REST consumption, and accessible glassmorphism themes.
+        </p>
+        <ul class="card-deliverables">
+          <li>Responsive HTML5/CSS3 templates</li>
+          <li>Interactive AI Chat Widget</li>
+          <li>Form validation & UX flows</li>
+        </ul>
+      </div>
+
+      <div class="card pillar-card">
+        <span class="badge badge-cyan" style="margin-bottom: 0.75rem;">Track 02</span>
+        <h3 class="card-title">Backend & Database Concurrency</h3>
+        <p class="card-text">
+          FastAPI REST API design, SQLAlchemy ORM modeling, SQLite/PostgreSQL data migrations, and JWT role-based access control.
+        </p>
+        <ul class="card-deliverables">
+          <li>Clean CRUD route modularity</li>
+          <li>Tenant isolation queries</li>
+          <li>Pydantic v2 data serialization</li>
+        </ul>
+      </div>
+
+      <div class="card pillar-card">
+        <span class="badge badge-green" style="margin-bottom: 0.75rem;">Track 03</span>
+        <h3 class="card-title">Computer Vision & PyTorch</h3>
+        <p class="card-text">
+          Edge and cloud vision inference pipelines, real-time object detection (YOLO), defect classification, and ONNX Runtime optimization.
+        </p>
+        <ul class="card-deliverables">
+          <li>Preprocessing & augmentation</li>
+          <li>Low-latency inference services</li>
+          <li>Model evaluation metrics (mAP, F1)</li>
+        </ul>
+      </div>
+
+      <div class="card pillar-card">
+        <span class="badge badge-purple" style="margin-bottom: 0.75rem;">Track 04</span>
+        <h3 class="card-title">GenAI, RAG & Agents</h3>
+        <p class="card-text">
+          Text normalization, sliding-window chunking, vector embeddings, BM25 semantic rankers, and multi-step tool-executing autonomous agents.
+        </p>
+        <ul class="card-deliverables">
+          <li>Custom RAG retrieval pipeline</li>
+          <li>Agent orchestration & tool schema</li>
+          <li>Human-in-the-loop safety gates</li>
+        </ul>
+      </div>
+
+      <div class="card pillar-card">
+        <span class="badge badge-cyan" style="margin-bottom: 0.75rem;">Track 05</span>
+        <h3 class="card-title">QA, Testing & Security Hardening</h3>
+        <p class="card-text">
+          Automated Pytest suites, API contract validation, authorization boundary penetration tests, Docker containers, and CI/CD pipelines.
+        </p>
+        <ul class="card-deliverables">
+          <li>End-to-end API test suites</li>
+          <li>Role & tenant security tests</li>
+          <li>Docker Compose containerization</li>
+        </ul>
+      </div>
+
+      <div class="card" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(6, 182, 212, 0.15)); border-color: var(--border-glow); display: flex; flex-direction: column; justify-content: center; text-align: center;">
+        <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 0.75rem;">Join Active Cohort</h3>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.25rem;">
+          Applications are evaluated based on coding fundamentals, problem-solving passion, and portfolio repos.
+        </p>
+        <a href="#apply-cohort" class="btn btn-primary" style="margin: 0 auto;">Apply for Fellowship &rarr;</a>
+      </div>
+    </div>
+
+    <!-- Active Cohorts Info & Apply Section -->
+    <div class="card" id="apply-cohort" style="border-color: var(--border-glow);">
+      <div class="grid-2" style="align-items: center;">
+        <div>
+          <span class="badge badge-green">Enrollment Open</span>
+          <h3 style="font-size: 1.8rem; color: #fff; margin: 0.75rem 0;">Cohort 2026-Q1 AI Engineering</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.25rem;">
+            Duration: 12 Weeks (Hands-on Engineering Fellowship)<br/>
+            Mentorship Model: Weekly code reviews, 1-on-1 sprint planning, and dedicated rubrics.<br/>
+            Prerequisites: Python fundamentals, basic Git knowledge, and drive to build production software.
+          </p>
+          <div style="font-size: 0.85rem; color: #94a3b8;">
+            Already accepted? <a href="/login" style="color: var(--secondary-cyan); font-weight: 600;">Sign in to Intern Portal &rarr;</a>
+          </div>
+        </div>
+
+        <div>
+          <form id="fellowship-apply-form" onsubmit="event.preventDefault(); showToast('Fellowship application received! Our engineering trainer will contact you for a technical assessment.'); this.reset();">
+            <div class="form-group">
+              <label class="form-label">Full Name *</label>
+              <input type="text" required class="form-control" placeholder="Maya Lin" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Address *</label>
+              <input type="email" required class="form-control" placeholder="maya@university.edu" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Preferred Specialization Track *</label>
+              <select class="form-select">
+                <option>Track 1: UI & Web Integration</option>
+                <option>Track 2: Backend Concurrency (FastAPI)</option>
+                <option>Track 3: Computer Vision & PyTorch</option>
+                <option>Track 4: GenAI, RAG & Agents</option>
+                <option>Track 5: QA, Security & Docker</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">GitHub Profile / Portfolio Link *</label>
+              <input type="url" required class="form-control" placeholder="https://github.com/your-username" />
+            </div>
+            <button type="submit" class="btn btn-cyan" style="width: 100%;">
+              Submit Fellowship Application &rarr;
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

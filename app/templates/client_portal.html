@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Client Portal | {{ client.name if client else 'Client Dashboard' }}{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: 3rem;">
+  <div class="container">
+    <!-- Tenant Header -->
+    <div class="card" style="margin-bottom: 2.5rem; border-color: var(--border-glow); background: linear-gradient(135deg, rgba(14, 19, 34, 0.95), rgba(26, 32, 50, 0.7));">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <span class="badge badge-cyan">Tenant Boundary Verified</span>
+            <span class="badge badge-purple">{{ client.tier if client else 'Enterprise' }} Tier</span>
+          </div>
+          <h2 style="font-size: 2rem; color: #fff; margin-top: 0.35rem;">{{ client.name if client else 'Enterprise Client Workspace' }}</h2>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">
+            Primary Contact: {{ client.primary_contact_name if client else user.full_name }} ({{ client.primary_contact_email if client else user.email }})
+          </p>
+        </div>
+        <div>
+          <button onclick="document.getElementById('newTicketModal').scrollIntoView({behavior: 'smooth'})" class="btn btn-primary btn-sm">
+            + New Support Ticket
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Projects & Milestones -->
+    <div style="margin-bottom: 3rem;">
+      <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 1.25rem;">Your Commissioned AI Solutions</h3>
+      
+      {% if projects %}
+        <div class="grid-2">
+          {% for p in projects %}
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+              <span class="badge badge-cyan">{{ p.status|upper }}</span>
+              <span style="font-size: 0.82rem; color: #34d399; font-weight: 700;">{{ p.progress_percentage }}% Complete</span>
+            </div>
+
+            <h4 style="font-size: 1.25rem; color: #fff; margin-bottom: 0.5rem;">{{ p.title }}</h4>
+            <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1rem;">{{ p.description }}</p>
+
+            <!-- Progress Bar -->
+            <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.08); border-radius: 50px; overflow: hidden; margin-bottom: 1.25rem;">
+              <div style="width: {{ p.progress_percentage }}%; height: 100%; background: linear-gradient(90deg, #8b5cf6, #06b6d4);"></div>
+            </div>
+
+            <div style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.85rem;">
+              <div style="font-size: 0.78rem; text-transform: uppercase; color: #cbd5e1; font-weight: 700; margin-bottom: 0.5rem;">Milestone Deliverables:</div>
+              <ul class="card-deliverables">
+                {% for m in p.milestones %}
+                <li>
+                  <span style="color: {% if m.status == 'completed' %}#34d399{% elif m.status == 'in_progress' %}#22d3ee{% else %}#94a3b8{% endif %};">
+                    {% if m.status == 'completed' %}✓{% else %}○{% endif %}
+                  </span>
+                  <span style="flex: 1;">{{ m.title }}</span>
+                  <span class="badge badge-purple" style="font-size: 0.6rem;">{{ m.status }}</span>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="card" style="text-align: center; padding: 2.5rem;">
+          <p style="color: var(--text-muted);">No active projects registered for this tenant yet.</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Support Tickets & Ticket Creation -->
+    <div class="grid-2" style="align-items: start;">
+      <div class="card">
+        <h3 style="font-size: 1.3rem; color: #fff; margin-bottom: 1rem;">Support Tickets & Inquiries</h3>
+        {% if tickets %}
+          <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+            {% for t in tickets %}
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <strong style="color: #fff; font-size: 0.95rem;">#{{ t.id }} - {{ t.subject }}</strong>
+                <span class="badge {% if t.status == 'open' %}badge-cyan{% else %}badge-green{% endif %}" style="font-size: 0.68rem;">{{ t.status }}</span>
+              </div>
+              <div style="display: flex; gap: 0.75rem; font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem;">
+                <span>Priority: {{ t.priority }}</span>
+                <span>• Category: {{ t.category }}</span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p style="color: var(--text-muted); font-size: 0.88rem;">No open tickets. All systems nominal.</p>
+        {% endif %}
+      </div>
+
+      <div class="card" id="newTicketModal">
+        <h3 style="font-size: 1.3rem; color: #fff; margin-bottom: 1rem;">Create Technical Support Ticket</h3>
+        <form onsubmit="handleCreateTicket(event)">
+          <div class="form-group">
+            <label class="form-label">Subject</label>
+            <input type="text" id="ticketSubject" class="form-control" required placeholder="e.g. Model inference latency inquiry" />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <select id="ticketCategory" class="form-select">
+                <option value="Technical Support">Technical Support</option>
+                <option value="AI Tuning">AI Tuning</option>
+                <option value="API Integration">API Integration</option>
+                <option value="Billing / Scope">Billing / Scope</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Priority</label>
+              <select id="ticketPriority" class="form-select">
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+                <option value="urgent">Urgent</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Message Details</label>
+            <textarea id="ticketMessage" class="form-control" required placeholder="Describe the technical question or issue in detail..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%;">
+            Submit Ticket to Engineering Team &rarr;
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+async function handleCreateTicket(e) {
+  e.preventDefault();
+  const subject = document.getElementById("ticketSubject").value.trim();
+  const category = document.getElementById("ticketCategory").value;
+  const priority = document.getElementById("ticketPriority").value;
+  const initial_message = document.getElementById("ticketMessage").value.trim();
+
+  try {
+    const res = await fetch("/api/v1/projects/tickets", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ subject, category, priority, initial_message })
+    });
+    if (res.ok) {
+      showToast("Support ticket opened! CAC Engineering notified.");
+      setTimeout(() => location.reload(), 800);
+    } else {
+      showToast("Error creating ticket", "error");
+    }
+  } catch(err) {
+    showToast("Network error submitting ticket", "error");
+  }
+}
+</script>
+{% endblock %}

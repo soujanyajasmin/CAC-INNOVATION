@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}AI Services Catalogue | CTRL ALT CRAC INNOVATIONS{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge badge-purple">Services Catalogue</span>
+      <h2>Full-Spectrum Artificial Intelligence Engineering</h2>
+      <p>Modular capabilities built once and configured to solve complex business operations.</p>
+    </div>
+
+    <div class="grid-2">
+      {% for s in services %}
+      <div class="card" id="{{ s.slug }}" style="display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+          <div class="card-icon" style="margin-bottom: 0;">
+            {% if s.slug == 'ai-machine-learning' %}📈
+            {% elif s.slug == 'deep-learning-computer-vision' %}👁️
+            {% elif s.slug == 'nlp-generative-ai' %}🧠
+            {% elif s.slug == 'rag-document-intelligence' %}📄
+            {% elif s.slug == 'ai-agent-development' %}🤖
+            {% elif s.slug == 'ai-chatbot-development' %}💬
+            {% elif s.slug == 'ai-integration-automation' %}⚙️
+            {% elif 'cyber' in s.slug %}🛡️
+            {% else %}🚀{% endif %}
+          </div>
+          <span class="badge badge-cyan">Phase 1 Ready</span>
+        </div>
+
+        <h3 class="card-title">{{ s.title }}</h3>
+        <p class="card-text">{{ s.full_description }}</p>
+
+        <div style="margin-top: auto;">
+          <div style="font-size: 0.78rem; text-transform: uppercase; color: #a78bfa; font-weight: 700; margin-bottom: 0.5rem;">
+            Typical Deliverables:
+          </div>
+          <ul class="card-deliverables">
+            {% for d in s.deliverables|from_json %}
+            <li>{{ d }}</li>
+            {% endfor %}
+          </ul>
+
+          {% if s.example_outcome %}
+          <div class="card-outcome" style="margin-bottom: 1.25rem;">
+            <strong>Target Client Outcome:</strong> {{ s.example_outcome }}
+          </div>
+          {% endif %}
+
+          <a href="/contact?service={{ s.title }}" class="btn btn-secondary btn-sm" style="width: 100%;">
+            Discuss {{ s.title }} &rarr;
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="card" style="margin-top: 4rem; text-align: center; background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(6, 182, 212, 0.15)); border-color: var(--border-glow);">
+      <h3 style="font-size: 1.6rem; color: #fff; margin-bottom: 0.75rem;">Need a Tailored AI Architecture?</h3>
+      <p style="color: var(--text-muted); max-width: 620px; margin: 0 auto 1.5rem auto;">
+        Our solutions team conducts preliminary technical assessments and feasibility reviews before implementation.
+      </p>
+      <a href="/contact" class="btn btn-primary">Schedule Technical Assessment</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

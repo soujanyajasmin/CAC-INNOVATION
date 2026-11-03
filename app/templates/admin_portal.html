@@ -1,0 +1,1245 @@
+{% extends "base.html" %}
+
+{% block title %}Admin & Business Development Console | CTRL ALT CRAC INNOVATIONS{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: 3rem;">
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <span class="badge badge-purple">Executive Operations & CRM</span>
+          <span class="badge badge-cyan">{{ user.title or 'Super Admin' }}</span>
+        </div>
+        <h2 style="font-size: 2rem; color: #fff; margin-top: 0.25rem;">Enterprise Platform Administration</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Lead pipeline, client onboarding, project creation, and financial tracking.</p>
+      </div>
+      <div style="display: flex; gap: 0.75rem;">
+        <a href="/docs" target="_blank" class="btn btn-secondary btn-sm">Interactive Swagger Docs &rarr;</a>
+      </div>
+    </div>
+
+    <!-- Quick Telemetry Stats -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2.5rem;">
+      <div class="card" style="padding: 1.25rem;">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Team & Staff Accounts</div>
+        <div style="font-size: 1.8rem; font-weight: 800; color: #a78bfa; margin: 0.25rem 0;">{{ all_users|length }}</div>
+        <div style="font-size: 0.75rem; color: #34d399;">Admin-managed credentials</div>
+      </div>
+
+      <div class="card" style="padding: 1.25rem;">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">CRM Pipeline Leads</div>
+        <div style="font-size: 1.8rem; font-weight: 800; color: #22d3ee; margin: 0.25rem 0;">{{ enquiries|length }}</div>
+        <div style="font-size: 0.75rem; color: #34d399;">AI auto-scored with lead qualification</div>
+      </div>
+
+      <div class="card" style="padding: 1.25rem;">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Active Clients & Projects</div>
+        <div style="font-size: 1.8rem; font-weight: 800; color: #38bdf8; margin: 0.25rem 0;">{{ clients|length }} / {{ projects|length }}</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ clients|length }} Clients • {{ projects|length }} Projects</div>
+      </div>
+
+      <div class="card" style="padding: 1.25rem;">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Billing & Invoices</div>
+        <div style="font-size: 1.8rem; font-weight: 800; color: #10b981; margin: 0.25rem 0;">{{ invoices|length }}</div>
+        <div style="font-size: 0.75rem; color: #34d399;">Milestone-based invoicing active</div>
+      </div>
+    </div>
+
+    <!-- Section: Team & Employee Credential Provisioning -->
+    <div class="card" style="margin-bottom: 2.5rem; border-color: var(--border-glow);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <h3 style="font-size: 1.3rem; color: #fff;">Employee & Team Credential Provisioning</h3>
+            <span class="badge badge-purple">{{ all_users|length }} Active Accounts</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">
+            Zero default accounts. Admin creates and issues credentials for Project Managers, Developers, Interns, and Business Development staff.
+          </p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openCreateUserModal()">
+          + Provision New Employee Account
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Employee Name & Email</th>
+              <th>Assigned Role</th>
+              <th>Title & Department</th>
+              <th>Account Status</th>
+              <th>Member Since</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in all_users %}
+            <tr>
+              <td>
+                <div style="font-weight: 600; color: #fff;">{{ u.full_name }}</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted);">{{ u.email }}</div>
+              </td>
+              <td>
+                {% if u.role and u.role.name == 'super_admin' %}
+                  <span class="badge badge-purple">👑 Super Admin</span>
+                {% elif u.role and u.role.name == 'admin' %}
+                  <span class="badge badge-cyan">💼 Admin / BD</span>
+                {% elif u.role and u.role.name == 'manager' %}
+                  <span class="badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);">📋 Project Manager</span>
+                {% elif u.role and u.role.name == 'employee' %}
+                  <span class="badge badge-cyan">💻 Developer</span>
+                {% elif u.role and u.role.name == 'intern' %}
+                  <span class="badge badge-green">🎓 Intern</span>
+                {% else %}
+                  <span class="badge" style="background: rgba(148, 163, 184, 0.2); color: #cbd5e1;">🏥 Client Stakeholder</span>
+                {% endif %}
+              </td>
+              <td>
+                <div style="color: #e2e8f0; font-size: 0.85rem; font-weight: 600;">{{ u.title or 'Team Member' }}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">{{ u.department or 'General' }}</div>
+                {% if u.skills_json and u.skills_json != '[]' %}
+                  <div style="display: flex; gap: 0.25rem; flex-wrap: wrap; margin-top: 0.3rem;">
+                    {% for sk in u.skills_json|from_json %}
+                      <span class="badge badge-purple" style="font-size: 0.62rem; padding: 0.15rem 0.4rem;">{{ sk }}</span>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </td>
+              <td>
+                {% if u.is_active %}
+                  <span class="badge badge-green" style="font-size: 0.7rem;">● Active</span>
+                {% else %}
+                  <span class="badge badge-secondary" style="font-size: 0.7rem;">Deactivated</span>
+                {% endif %}
+              </td>
+              <td style="font-size: 0.8rem; color: var(--text-muted);">
+                {{ u.created_at.strftime('%Y-%m-%d') if u.created_at else 'Recent' }}
+              </td>
+              <td>
+                {% if u.email != 'admin@cac-innovations.com' and u.id != user.id %}
+                  <button class="btn btn-secondary btn-sm" style="color: #fca5a5; border-color: rgba(239, 68, 68, 0.4); padding: 0.25rem 0.6rem; font-size: 0.75rem;" onclick="deleteEmployee({{ u.id }}, '{{ u.email }}')">
+                    Revoke
+                  </button>
+                {% else %}
+                  <span style="font-size: 0.75rem; color: var(--text-muted); font-style: italic;">Primary Root</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section: Client Accounts & Dedicated Account Managers -->
+    <div class="card" style="margin-bottom: 2.5rem; border-color: rgba(251, 191, 36, 0.4);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <h3 style="font-size: 1.3rem; color: #fff;">Client Accounts & Dedicated Account Managers</h3>
+            <span class="badge badge-amber">{{ clients|length }} Clients</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">
+            Assign each enterprise client organization to a designated Project/Account Manager to oversee projects, task allocation, and deliverables.
+          </p>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Client Organization</th>
+              <th>Industry & Tier</th>
+              <th>Primary Contact</th>
+              <th>Assigned Account Manager</th>
+              <th>Active Projects</th>
+              <th>Assign / Change Manager</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in clients %}
+            <tr>
+              <td>
+                <div style="font-weight: 700; color: #fff;">{{ c.name }}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;">Code: {{ c.code }}</div>
+              </td>
+              <td>
+                <div style="color: #e2e8f0;">{{ c.industry or 'Technology' }}</div>
+                <span class="badge badge-purple" style="font-size: 0.65rem;">{{ c.tier or 'Enterprise' }}</span>
+              </td>
+              <td>
+                <div style="color: #e2e8f0; font-size: 0.85rem;">{{ c.primary_contact_name or 'N/A' }}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">{{ c.primary_contact_email or '' }}</div>
+              </td>
+              <td>
+                {% if c.manager %}
+                  <div style="display: flex; align-items: center; gap: 0.4rem;">
+                    <span class="badge badge-amber" style="font-size: 0.72rem;">👔 {{ c.manager.full_name }}</span>
+                  </div>
+                  <div style="font-size: 0.72rem; color: var(--text-muted);">{{ c.manager.email }}</div>
+                {% else %}
+                  <span class="badge badge-secondary" style="font-size: 0.72rem; color: #fca5a5;">⚠️ Unassigned</span>
+                {% endif %}
+              </td>
+              <td>
+                <span class="badge badge-cyan">{{ c.projects|length }} Projects</span>
+              </td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <select id="clientManagerSelect-{{ c.id }}" class="form-select" style="font-size: 0.78rem; padding: 0.35rem 0.5rem; width: auto; min-width: 170px;">
+                    <option value="">-- Choose Manager --</option>
+                    {% for m in managers %}
+                    <option value="{{ m.id }}" {% if c.manager_id == m.id %}selected{% endif %}>
+                      {{ m.full_name }} (Manager)
+                    </option>
+                    {% endfor %}
+                  </select>
+                  <button class="btn btn-secondary btn-sm" style="border-color: #fbbf24; color: #fbbf24; font-size: 0.75rem; padding: 0.35rem 0.75rem;" onclick="assignClientManager({{ c.id }})">
+                    Assign &rarr;
+                  </button>
+                </div>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">
+                No client accounts created yet. Clients are auto-created when you onboard leads or commission projects.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section: Commissioned Projects & Workspace Management -->
+    <div class="card" style="margin-bottom: 2.5rem; border-color: rgba(6, 182, 212, 0.35);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <h3 style="font-size: 1.3rem; color: #fff;">Commissioned Projects & Client Workspaces</h3>
+            <span class="badge badge-cyan">{{ projects|length }} Projects</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">
+            Admin direct project initialization with custom technology stacks, assigned managers, and milestone delivery schedules.
+          </p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openDirectProjectModal()">
+          + Create New Project Directly
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Project Title</th>
+              <th>Client Organization</th>
+              <th>Assigned Manager</th>
+              <th>Technology Stack</th>
+              <th>Budget</th>
+              <th>Delivery Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in projects %}
+            <tr>
+              <td>
+                <div style="font-weight: 700; color: #fff;">{{ p.title }}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">{{ p.description or 'No scope summary provided' }}</div>
+              </td>
+              <td>
+                <span class="badge badge-purple">{{ p.client.name if p.client else 'Direct' }}</span>
+              </td>
+              <td>
+                <div style="font-size: 0.85rem; color: #fbbf24;">{{ p.manager.full_name if p.manager else 'Unassigned' }}</div>
+              </td>
+              <td>
+                <div style="display: flex; gap: 0.3rem; flex-wrap: wrap;">
+                  {% for t in p.tech_stack_json|from_json %}
+                    <span class="badge badge-cyan" style="font-size: 0.65rem;">{{ t }}</span>
+                  {% endfor %}
+                </div>
+              </td>
+              <td style="font-weight: 700; color: #34d399;">{{ p.budget or '$25,000' }}</td>
+              <td>
+                <span class="badge {% if p.status == 'completed' %}badge-green{% elif p.status == 'in_progress' %}badge-cyan{% else %}badge-purple{% endif %}">
+                  {{ p.status|upper }} ({{ p.progress_percentage }}%)
+                </span>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">
+                No active projects commissioned yet. Click "+ Create New Project Directly" or convert a won lead.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    
+
+    <!-- Section: Technologies & Intern Roles Management (Two-column layout) -->
+    <div class="grid-2" style="margin-bottom: 2.5rem;">
+      <!-- Column 1: Technology Catalog Management -->
+      <div class="card" style="border-color: rgba(139, 92, 246, 0.35);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+          <div>
+            <h3 style="font-size: 1.2rem; color: #fff;">Technology Catalog</h3>
+            <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0;">Add programming languages, frameworks & security stacks</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="openCreateTechModal()" style="border-color: var(--secondary-cyan); color: #22d3ee;">
+            + Add Technology
+          </button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; max-height: 380px; overflow-y: auto; padding-right: 0.3rem;">
+          {% for t in technologies %}
+          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 6px; padding: 0.6rem 0.85rem;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.4rem;">
+                <span style="font-weight: 700; color: #fff; font-size: 0.88rem;">{{ t.name }}</span>
+                <span class="badge badge-purple" style="font-size: 0.62rem;">{{ t.category or 'Tech' }}</span>
+              </div>
+              <div style="font-size: 0.74rem; color: var(--text-muted);">{{ t.description or 'Configured technology asset' }}</div>
+            </div>
+            <button onclick="deleteTechnology({{ t.id }}, '{{ t.name }}')" style="background: none; border: none; color: #f87171; cursor: pointer; font-size: 0.9rem;" title="Delete Technology">&times;</button>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Column 2: Intern Role Tracks & Specializations -->
+      <div class="card" style="border-color: rgba(16, 185, 129, 0.35);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+          <div>
+            <h3 style="font-size: 1.2rem; color: #fff;">Intern Specialization Roles</h3>
+            <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0;">Define custom intern domains, tracks & skills</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="openCreateInternRoleModal()" style="border-color: #34d399; color: #34d399;">
+            + Add Intern Role
+          </button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; max-height: 380px; overflow-y: auto; padding-right: 0.3rem;">
+          {% for ir in intern_roles %}
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 6px; padding: 0.65rem 0.85rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong style="color: #fff; font-size: 0.88rem;">{{ ir.title }}</strong>
+                <span class="badge badge-green" style="font-size: 0.62rem; margin-left: 0.3rem;">{{ ir.domain }}</span>
+              </div>
+              <button onclick="deleteInternRole({{ ir.id }}, '{{ ir.title }}')" style="background: none; border: none; color: #f87171; cursor: pointer; font-size: 0.9rem;" title="Delete Intern Role">&times;</button>
+            </div>
+            <div style="font-size: 0.74rem; color: var(--text-muted); margin: 0.25rem 0;">{{ ir.description or 'Specialization track' }} ({{ ir.duration_months }} Months)</div>
+            <div style="display: flex; gap: 0.25rem; flex-wrap: wrap; margin-top: 0.3rem;">
+              {% for sk in ir.required_skills_json|from_json %}
+                <span class="badge badge-cyan" style="font-size: 0.6rem; padding: 0.15rem 0.35rem;">{{ sk }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1: Inbound Leads & CRM Pipeline -->
+    <div class="card" style="margin-bottom: 2.5rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <h3 style="font-size: 1.3rem; color: #fff;">Inbound Leads & CRM Pipeline</h3>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">New Enquiry &rarr; Contacted &rarr; Discussion &rarr; Proposal Sent &rarr; Negotiation &rarr; Won</p>
+        </div>
+        <span class="badge badge-cyan">{{ enquiries|length }} Records</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Contact</th>
+              <th>Company & Sector</th>
+              <th>Service & Budget</th>
+              <th>AI Score</th>
+              <th>Pipeline Stage</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for e in enquiries %}
+            <tr>
+              <td>
+                <div style="font-weight: 600; color: #fff;">{{ e.name }}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">{{ e.email }}</div>
+              </td>
+              <td>
+                <div>{{ e.company or 'N/A' }}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">{{ e.industry or 'General' }}</div>
+              </td>
+              <td>
+                <div style="color: #22d3ee; font-weight: 500;">{{ e.service_interest or 'Consultation' }}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">{{ e.budget or 'Unspecified' }}</div>
+              </td>
+              <td>
+                <span class="badge {% if e.lead_score >= 70 %}badge-green{% elif e.lead_score >= 50 %}badge-purple{% else %}badge-cyan{% endif %}">
+                  {{ e.lead_score }}/100
+                </span>
+              </td>
+              <td>
+                <select class="form-select" style="padding: 0.3rem 0.5rem; font-size: 0.8rem; width: auto;" onchange="updateLeadStatus({{ e.id }}, this.value)">
+                  <option value="new_enquiry" {% if e.status == 'new_enquiry' %}selected{% endif %}>New Enquiry</option>
+                  <option value="contacted" {% if e.status == 'contacted' %}selected{% endif %}>Contacted</option>
+                  <option value="requirement_discussion" {% if e.status == 'requirement_discussion' %}selected{% endif %}>Discussion</option>
+                  <option value="proposal_sent" {% if e.status == 'proposal_sent' %}selected{% endif %}>Proposal Sent</option>
+                  <option value="negotiation" {% if e.status == 'negotiation' %}selected{% endif %}>Negotiation</option>
+                  <option value="won" {% if e.status == 'won' %}selected{% endif %}>Won (Converted)</option>
+                  <option value="lost" {% if e.status == 'lost' %}selected{% endif %}>Lost</option>
+                </select>
+              </td>
+              <td>
+                <div style="display: flex; gap: 0.4rem;">
+                  <button class="btn btn-secondary btn-sm" onclick="alert('Client Brief:\n\n{{ e.message }}\n\nAI Notes:\n{{ e.qualification_notes }}')">
+                    Brief
+                  </button>
+                  {% if not e.converted_project_id %}
+                  <button class="btn btn-primary btn-sm" onclick="openConvertModal({{ e.id }}, '{{ e.company or e.name }}', '{{ e.service_interest or 'AI Application' }}', '{{ e.budget or '$25,000' }}')">
+                    + Onboard Client
+                  </button>
+                  {% else %}
+                  <span class="badge badge-green" style="font-size: 0.65rem;">Project #{{ e.converted_project_id }} Active</span>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    
+
+    <!-- Section 2: Invoices & Milestone Billing -->
+    <div class="card" style="margin-bottom: 2.5rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div>
+          <h3 style="font-size: 1.3rem; color: #fff;">Milestone Invoices & Financials</h3>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">Project billing linked to technical deliverables</p>
+        </div>
+        <span class="badge badge-green">{{ invoices|length }} Invoices</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Invoice #</th>
+              <th>Client</th>
+              <th>Project</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Due / Paid Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for inv in invoices %}
+            <tr>
+              <td style="font-weight: 700; color: #fff;">{{ inv.invoice_number }}</td>
+              <td>{{ inv.client.name if inv.client else 'N/A' }}</td>
+              <td style="color: var(--text-muted); font-size: 0.82rem;">{{ inv.project.title if inv.project else 'N/A' }}</td>
+              <td style="font-weight: 700; color: #34d399;">${{ "{:,.2f}".format(inv.amount) }}</td>
+              <td>
+                <span class="badge {% if inv.status == 'paid' %}badge-green{% elif inv.status == 'sent' %}badge-cyan{% else %}badge-purple{% endif %}">
+                  {{ inv.status|upper }}
+                </span>
+              </td>
+              <td style="font-size: 0.82rem; color: var(--text-muted);">
+                {{ inv.paid_at.strftime('%Y-%m-%d') if inv.paid_at else (inv.due_date.strftime('%Y-%m-%d') if inv.due_date else 'Net 30') }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    
+
+    <!-- Section 3: AI Agents & Knowledge Bases -->
+    <div class="grid-2" style="margin-bottom: 2.5rem;">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3 style="font-size: 1.2rem; color: #fff;">Registered AI Agents</h3>
+          <span class="badge badge-purple">{{ agents|length }} Agents</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          {% for a in agents %}
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <strong style="color: #fff; font-size: 0.92rem;">{{ a.name }}</strong>
+              <span class="badge badge-cyan" style="font-size: 0.65rem;">{{ a.agent_code }}</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.82rem; margin: 0.35rem 0;">{{ a.description }}</p>
+            <div style="display: flex; gap: 0.35rem; flex-wrap: wrap; margin-top: 0.4rem;">
+              {% for tool in a.permitted_tools_json|from_json %}
+              <span class="badge badge-purple" style="font-size: 0.65rem;">🛠️ {{ tool }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3 style="font-size: 1.2rem; color: #fff;">RAG Knowledge Ingestion</h3>
+          <span class="badge badge-cyan">{{ knowledge_bases|length }} Collections</span>
+        </div>
+        
+        <form id="ingest-doc-form" onsubmit="handleDocIngest(event)">
+          <div class="form-group">
+            <label class="form-label">Knowledge Base Collection</label>
+            <select id="ingestKbId" class="form-select">
+              {% for kb in knowledge_bases %}
+              <option value="{{ kb.id }}">{{ kb.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Document Title</label>
+            <input type="text" id="ingestDocTitle" class="form-control" required placeholder="e.g. Standard SLA Policy 2026" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Raw Text Content to Chunk & Index</label>
+            <textarea id="ingestDocContent" class="form-control" required style="min-height: 90px;" placeholder="Paste company manual, policy, or technical specifications here..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-cyan btn-sm" style="width: 100%;">
+            Chunk & Index into RAG Engine &rarr;
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Section 4: Audit Logs -->
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="font-size: 1.2rem; color: #fff;">Security Audit Trail</h3>
+        <span class="badge badge-purple">Real-Time Logs</span>
+      </div>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Action</th>
+              <th>User</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for log in audit_logs %}
+            <tr>
+              <td style="font-size: 0.78rem; color: var(--text-muted);">{{ log.created_at.strftime('%Y-%m-%d %H:%M') if log.created_at else 'Recent' }}</td>
+              <td><span class="badge badge-cyan" style="font-size: 0.65rem;">{{ log.action }}</span></td>
+              <td style="font-size: 0.82rem;">{{ log.user_email or 'System' }}</td>
+              <td style="font-size: 0.82rem; color: var(--text-muted);">{{ log.details }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    
+  </div>
+</section>
+
+<!-- Modal: Create New Employee Credentials -->
+<div id="createUserModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+  <div class="card" style="max-width: 540px; width: 92%; border-color: var(--border-glow);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <div>
+        <h3 style="font-size: 1.25rem; color: #fff;">Provision Employee Credentials</h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Create a new staff login with role-scoped portal access.</p>
+      </div>
+      <button onclick="closeCreateUserModal()" style="background: none; border: none; color: #94a3b8; font-size: 1.4rem; cursor: pointer;">&times;</button>
+    </div>
+    <form onsubmit="handleCreateUser(event)">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+        <div class="form-group">
+          <label class="form-label">Full Name *</label>
+          <input type="text" id="newStaffName" class="form-control" required placeholder="Alex Mercer" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">System Role *</label>
+          <select id="newStaffRole" class="form-select" required onchange="handleStaffRoleChange(this.value)">
+            <option value="employee" selected>💻 Developer (Choose Technology)</option>
+            <option value="intern">🎓 Intern (Choose Role Track)</option>
+            <option value="manager">📋 Project Manager</option>
+            <option value="admin">💼 Admin / Business Development</option>
+            <option value="client">🏥 Client Stakeholder</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Conditional Intern Role Track Selection -->
+      <div id="internTrackGroup" class="form-group" style="display: none; background: rgba(16, 185, 129, 0.08); border: 1px dashed rgba(16, 185, 129, 0.3); border-radius: 6px; padding: 0.75rem;">
+        <label class="form-label" style="color: #34d399; font-weight: 700;">Intern Specialization Track *</label>
+        <select id="internRoleTrackSelect" class="form-select" onchange="applyInternRoleTrack(this)">
+          <option value="">-- Choose Intern Specialization --</option>
+          {% for ir in intern_roles %}
+          <option value="{{ ir.title }}" data-domain="{{ ir.domain }}" data-skills='{{ ir.required_skills_json }}'>{{ ir.title }} ({{ ir.domain }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Developer Technology Stack Checkboxes -->
+      <div id="devTechGroup" class="form-group" style="background: rgba(139, 92, 246, 0.08); border: 1px dashed rgba(139, 92, 246, 0.3); border-radius: 6px; padding: 0.75rem;">
+        <label class="form-label" style="color: #a78bfa; font-weight: 700; margin-bottom: 0.4rem;">Primary Technologies / Skills (Select all that apply)</label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; max-height: 120px; overflow-y: auto;">
+          {% for t in technologies %}
+          <label style="font-size: 0.8rem; color: #cbd5e1; display: flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+            <input type="checkbox" name="staffSkill" value="{{ t.name }}" />
+            {{ t.name }} <span style="font-size: 0.68rem; color: var(--text-muted);">({{ t.category }})</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Company Email Address *</label>
+        <input type="email" id="newStaffEmail" class="form-control" required placeholder="alex@cac-innovations.com" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Initial Password *</label>
+        <div style="display: flex; gap: 0.5rem;">
+          <input type="text" id="newStaffPassword" class="form-control" required placeholder="SecureInitialPass#2026" />
+          <button type="button" class="btn btn-secondary btn-sm" onclick="generateRandomPass()">Generate</button>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+        <div class="form-group">
+          <label class="form-label">Job Title / Designation *</label>
+          <input type="text" id="newStaffTitle" class="form-control" required placeholder="e.g. Python Backend Developer, React Developer, Mobile Engineer" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Department *</label>
+          <input type="text" id="newStaffDept" class="form-control" required placeholder="e.g. Applied Engineering, Mobile, Cyber Security" />
+        </div>
+      </div>
+
+      <button type="submit" id="createUserSubmitBtn" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+        Create & Issue Credentials &rarr;
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Create New Project Directly (Admin Access) -->
+<div id="createProjectDirectModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+  <div class="card" style="max-width: 580px; width: 92%; border-color: rgba(6, 182, 212, 0.4);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <div>
+        <h3 style="font-size: 1.25rem; color: #fff;">Initialize Project Workspace</h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Commission a new delivery project with custom tech stack & assigned manager.</p>
+      </div>
+      <button onclick="closeDirectProjectModal()" style="background: none; border: none; color: #94a3b8; font-size: 1.4rem; cursor: pointer;">&times;</button>
+    </div>
+    <form onsubmit="handleDirectProjectCreate(event)">
+      <div class="form-group">
+        <label class="form-label">Project Title *</label>
+        <input type="text" id="dpTitle" class="form-control" required placeholder="e.g. OmniFlow Microservices & Mobile App" />
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+        <div class="form-group">
+          <label class="form-label">Client Organization *</label>
+          <input type="text" id="dpClientName" class="form-control" required placeholder="e.g. BioVance Systems or Select Client" list="existingClientsList" />
+          <datalist id="existingClientsList">
+            {% for c in clients %}
+            <option value="{{ c.name }}"></option>
+            {% endfor %}
+          </datalist>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Assigned Project Manager *</label>
+          <select id="dpManagerId" class="form-select" required>
+            <option value="">-- Assign Manager --</option>
+            {% for m in managers %}
+            <option value="{{ m.id }}">{{ m.full_name }} ({{ m.title or 'Manager' }})</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Technology Stack (Select all technologies used)</label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.35rem; max-height: 110px; overflow-y: auto; background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: 6px; padding: 0.5rem;">
+          {% for t in technologies %}
+          <label style="font-size: 0.78rem; color: #cbd5e1; display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+            <input type="checkbox" name="dpTech" value="{{ t.name }}" />
+            {{ t.name }}
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+        <div class="form-group">
+          <label class="form-label">Agreed Budget</label>
+          <input type="text" id="dpBudget" class="form-control" placeholder="$35,000" value="$35,000" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Target Delivery Date</label>
+          <input type="date" id="dpDeadline" class="form-control" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Project Scope & Deliverable Summary</label>
+        <textarea id="dpDesc" class="form-control" style="min-height: 60px;" placeholder="Core architecture deliverables and milestones..."></textarea>
+      </div>
+
+      <button type="submit" id="dpSubmitBtn" class="btn btn-primary" style="width: 100%; margin-top: 0.25rem;">
+        Initialize Project & Phase 1 Milestone &rarr;
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Add New Technology -->
+<div id="createTechModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+  <div class="card" style="max-width: 480px; width: 90%; border-color: rgba(139, 92, 246, 0.4);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h3 style="font-size: 1.25rem; color: #fff;">Add New Technology to Catalog</h3>
+      <button onclick="closeCreateTechModal()" style="background: none; border: none; color: #94a3b8; font-size: 1.3rem; cursor: pointer;">&times;</button>
+    </div>
+    <form onsubmit="handleCreateTechnology(event)">
+      <div class="form-group">
+        <label class="form-label">Technology Name *</label>
+        <input type="text" id="techName" class="form-control" required placeholder="e.g. Golang, Rust, Vue.js, GraphQL, PyTorch" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category *</label>
+        <select id="techCategory" class="form-select" required>
+          <option value="Backend">Backend Language / Framework</option>
+          <option value="Frontend">Frontend UI Library</option>
+          <option value="Cloud & DevOps">Cloud & DevOps / Containers</option>
+          <option value="Cyber Security">Cyber Security & PenTesting</option>
+          <option value="Mobile">Mobile Application (iOS/Android)</option>
+          <option value="AI / ML">AI / Machine Learning / Deep Learning</option>
+          <option value="Database">Database & Feature Store</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description & Use Case</label>
+        <input type="text" id="techDesc" class="form-control" placeholder="Brief description of application in CAC projects" />
+      </div>
+      <button type="submit" id="techSubmitBtn" class="btn btn-primary" style="width: 100%;">
+        Save Technology to Company Catalog &rarr;
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Add Intern Role Track -->
+<div id="createInternRoleModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+  <div class="card" style="max-width: 520px; width: 90%; border-color: rgba(16, 185, 129, 0.4);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <div>
+        <h3 style="font-size: 1.25rem; color: #fff;">Add Intern Specialization Role</h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Define new intern track, domain, and required technology skills.</p>
+      </div>
+      <button onclick="closeCreateInternRoleModal()" style="background: none; border: none; color: #94a3b8; font-size: 1.3rem; cursor: pointer;">&times;</button>
+    </div>
+    <form onsubmit="handleCreateInternRole(event)">
+      <div class="form-group">
+        <label class="form-label">Intern Role Title *</label>
+        <input type="text" id="irTitle" class="form-control" required placeholder="e.g. Python Backend Intern, Cyber Security Intern" />
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+        <div class="form-group">
+          <label class="form-label">Technical Domain *</label>
+          <select id="irDomain" class="form-select" required>
+            <option value="Backend">Backend Engineering</option>
+            <option value="Frontend">Frontend Web Development</option>
+            <option value="Mobile">Mobile Application Development</option>
+            <option value="Cyber Security">Cyber Security & PenTesting</option>
+            <option value="Cloud & DevOps">Cloud & DevOps Engineering</option>
+            <option value="Data Science">Data Science & Analytics</option>
+            <option value="QA/Testing">QA & Test Automation</option>
+            <option value="AI / ML">AI / Machine Learning</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Duration (Months)</label>
+          <input type="number" id="irDuration" class="form-control" min="1" max="12" value="3" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Required Technologies (Select relevant)</label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem; max-height: 100px; overflow-y: auto; background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: 6px; padding: 0.5rem;">
+          {% for t in technologies %}
+          <label style="font-size: 0.78rem; color: #cbd5e1; display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+            <input type="checkbox" name="irSkill" value="{{ t.name }}" />
+            {{ t.name }}
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Learning Scope / Description</label>
+        <textarea id="irDesc" class="form-control" style="min-height: 60px;" placeholder="Key responsibilities and learning objectives for this intern role..."></textarea>
+      </div>
+
+      <button type="submit" id="irSubmitBtn" class="btn btn-primary" style="width: 100%; background: #059669; border-color: #10b981;">
+        Add Intern Specialization Track &rarr;
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Convert Lead to Client & Project -->
+<div id="convertLeadModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+  <div class="card" style="max-width: 520px; width: 90%; border-color: var(--border-glow);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h3 style="font-size: 1.25rem; color: #fff;">Onboard Lead to Client & Project</h3>
+      <button onclick="closeConvertModal()" style="background: none; border: none; color: #94a3b8; font-size: 1.2rem; cursor: pointer;">&times;</button>
+    </div>
+    <form onsubmit="handleConvertLead(event)">
+      <input type="hidden" id="convLeadId" />
+      <div class="form-group">
+        <label class="form-label">Client Name</label>
+        <input type="text" id="convClientName" class="form-control" readonly style="opacity: 0.8;" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Project Title *</label>
+        <input type="text" id="convProjTitle" class="form-control" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Assign Project Manager *</label>
+        <select id="convManagerId" class="form-select" required>
+          {% for m in managers %}
+          <option value="{{ m.id }}">{{ m.full_name }} ({{ m.title or 'Manager' }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Agreed Budget</label>
+        <input type="text" id="convBudget" class="form-control" />
+      </div>
+      <button type="submit" class="btn btn-primary" style="width: 100%;">
+        Convert & Initialize Project Workspace &rarr;
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function handleStaffRoleChange(role) {
+  const internGroup = document.getElementById("internTrackGroup");
+  const devGroup = document.getElementById("devTechGroup");
+  const titleInput = document.getElementById("newStaffTitle");
+  const deptInput = document.getElementById("newStaffDept");
+
+  if (role === "intern") {
+    internGroup.style.display = "block";
+    devGroup.style.display = "none";
+    titleInput.placeholder = "e.g. Python Backend Intern";
+    deptInput.placeholder = "e.g. Backend Engineering";
+  } else if (role === "employee") {
+    internGroup.style.display = "none";
+    devGroup.style.display = "block";
+    titleInput.placeholder = "e.g. Python Backend Developer, React Engineer";
+    deptInput.placeholder = "e.g. Engineering, Cyber Security, Mobile";
+  } else {
+    internGroup.style.display = "none";
+    devGroup.style.display = "none";
+    titleInput.placeholder = "Job Title / Role Title";
+    deptInput.placeholder = "Department";
+  }
+}
+
+function applyInternRoleTrack(selectEl) {
+  const opt = selectEl.options[selectEl.selectedIndex];
+  if (!opt || !opt.value) return;
+  document.getElementById("newStaffTitle").value = opt.value;
+  document.getElementById("newStaffDept").value = opt.getAttribute("data-domain") || "Internship";
+}
+
+function openCreateUserModal() {
+  document.getElementById("createUserModal").style.display = "flex";
+  if (!document.getElementById("newStaffPassword").value) {
+    generateRandomPass();
+  }
+}
+
+function closeCreateUserModal() {
+  document.getElementById("createUserModal").style.display = "none";
+}
+
+function generateRandomPass() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%";
+  let pass = "";
+  for (let i = 0; i < 12; i++) {
+    pass += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  document.getElementById("newStaffPassword").value = pass;
+}
+
+async function handleCreateUser(e) {
+  e.preventDefault();
+  const btn = document.getElementById("createUserSubmitBtn");
+  btn.disabled = true;
+  btn.innerText = "Provisioning Account...";
+
+  const full_name = document.getElementById("newStaffName").value.trim();
+  const email = document.getElementById("newStaffEmail").value.trim();
+  const password = document.getElementById("newStaffPassword").value;
+  const role_name = document.getElementById("newStaffRole").value;
+  const title = document.getElementById("newStaffTitle").value.trim();
+  const department = document.getElementById("newStaffDept").value.trim();
+
+  // Collect checked skills
+  const skills = [];
+  document.querySelectorAll('input[name="staffSkill"]:checked').forEach(cb => {
+    skills.push(cb.value);
+  });
+
+  try {
+    const res = await fetch("/api/v1/auth/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        full_name,
+        email,
+        password,
+        role_name,
+        title: title || undefined,
+        department: department || undefined,
+        skills: skills.length > 0 ? skills : undefined
+      })
+    });
+
+    if (res.ok) {
+      showToast(`Account successfully created for ${full_name} (${email})!`);
+      closeCreateUserModal();
+      setTimeout(() => location.reload(), 700);
+    } else {
+      const err = await res.json();
+      showToast(err.detail || "Error creating employee account", "error");
+      btn.disabled = false;
+      btn.innerText = "Create & Issue Credentials →";
+    }
+  } catch(err) {
+    showToast("Network error while creating account", "error");
+    btn.disabled = false;
+    btn.innerText = "Create & Issue Credentials →";
+  }
+}
+
+// Direct Project Creation
+function openDirectProjectModal() {
+  document.getElementById("createProjectDirectModal").style.display = "flex";
+}
+function closeDirectProjectModal() {
+  document.getElementById("createProjectDirectModal").style.display = "none";
+}
+
+async function handleDirectProjectCreate(e) {
+  e.preventDefault();
+  const btn = document.getElementById("dpSubmitBtn");
+  btn.disabled = true;
+  btn.innerText = "Initializing Project...";
+
+  const title = document.getElementById("dpTitle").value.trim();
+  const client_name = document.getElementById("dpClientName").value.trim();
+  const manager_id_val = document.getElementById("dpManagerId").value;
+  const manager_id = manager_id_val ? parseInt(manager_id_val) : null;
+  const budget = document.getElementById("dpBudget").value.trim();
+  const deadline_val = document.getElementById("dpDeadline").value;
+  const target_delivery_date = deadline_val ? new Date(deadline_val).toISOString() : null;
+  const description = document.getElementById("dpDesc").value.trim();
+
+  const tech_stack = [];
+  document.querySelectorAll('input[name="dpTech"]:checked').forEach(cb => {
+    tech_stack.push(cb.value);
+  });
+
+  try {
+    const res = await fetch("/api/v1/projects/direct", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title,
+        client_name,
+        manager_id,
+        tech_stack,
+        budget,
+        target_delivery_date,
+        description: description || undefined
+      })
+    });
+
+    if (res.ok) {
+      showToast(`Project '${title}' commissioned successfully with manager & Phase 1!`);
+      closeDirectProjectModal();
+      setTimeout(() => location.reload(), 700);
+    } else {
+      const err = await res.json();
+      showToast(err.detail || "Failed to create project", "error");
+      btn.disabled = false;
+      btn.innerText = "Initialize Project & Phase 1 Milestone →";
+    }
+  } catch(err) {
+    showToast("Network error", "error");
+    btn.disabled = false;
+    btn.innerText = "Initialize Project & Phase 1 Milestone →";
+  }
+}
+
+// Technology Management
+function openCreateTechModal() {
+  document.getElementById("createTechModal").style.display = "flex";
+}
+function closeCreateTechModal() {
+  document.getElementById("createTechModal").style.display = "none";
+}
+
+async function handleCreateTechnology(e) {
+  e.preventDefault();
+  const btn = document.getElementById("techSubmitBtn");
+  btn.disabled = true;
+
+  const name = document.getElementById("techName").value.trim();
+  const category = document.getElementById("techCategory").value;
+  const description = document.getElementById("techDesc").value.trim();
+
+  try {
+    const res = await fetch("/api/v1/technologies/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, category, description })
+    });
+    if (res.ok) {
+      showToast(`Technology '${name}' added to catalog!`);
+      closeCreateTechModal();
+      setTimeout(() => location.reload(), 700);
+    } else {
+      const err = await res.json();
+      showToast(err.detail || "Error adding technology", "error");
+      btn.disabled = false;
+    }
+  } catch(err) {
+    showToast("Network error", "error");
+    btn.disabled = false;
+  }
+}
+
+async function deleteTechnology(id, name) {
+  if (!confirm(`Delete technology '${name}' from catalog?`)) return;
+  try {
+    const res = await fetch(`/api/v1/technologies/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      showToast(`Technology '${name}' deleted.`);
+      setTimeout(() => location.reload(), 600);
+    }
+  } catch(e) {
+    showToast("Network error", "error");
+  }
+}
+
+// Intern Roles Management
+function openCreateInternRoleModal() {
+  document.getElementById("createInternRoleModal").style.display = "flex";
+}
+function closeCreateInternRoleModal() {
+  document.getElementById("createInternRoleModal").style.display = "none";
+}
+
+async function handleCreateInternRole(e) {
+  e.preventDefault();
+  const btn = document.getElementById("irSubmitBtn");
+  btn.disabled = true;
+
+  const title = document.getElementById("irTitle").value.trim();
+  const domain = document.getElementById("irDomain").value;
+  const duration_months = parseInt(document.getElementById("irDuration").value) || 3;
+  const description = document.getElementById("irDesc").value.trim();
+
+  const required_skills = [];
+  document.querySelectorAll('input[name="irSkill"]:checked').forEach(cb => {
+    required_skills.push(cb.value);
+  });
+
+  try {
+    const res = await fetch("/api/v1/technologies/intern-roles", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, domain, duration_months, description, required_skills })
+    });
+    if (res.ok) {
+      showToast(`Intern Role Track '${title}' created successfully!`);
+      closeCreateInternRoleModal();
+      setTimeout(() => location.reload(), 700);
+    } else {
+      const err = await res.json();
+      showToast(err.detail || "Error creating intern role", "error");
+      btn.disabled = false;
+    }
+  } catch(err) {
+    showToast("Network error", "error");
+    btn.disabled = false;
+  }
+}
+
+async function deleteInternRole(id, title) {
+  if (!confirm(`Remove intern role track '${title}'?`)) return;
+  try {
+    const res = await fetch(`/api/v1/technologies/intern-roles/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      showToast(`Intern role '${title}' removed.`);
+      setTimeout(() => location.reload(), 600);
+    }
+  } catch(e) {
+    showToast("Network error", "error");
+  }
+}
+
+async function deleteEmployee(userId, email) {
+  if (!confirm(`Are you sure you want to revoke and delete the account for ${email}?`)) {
+    return;
+  }
+  try {
+    const res = await fetch(`/api/v1/auth/users/${userId}`, {
+      method: "DELETE"
+    });
+    if (res.ok) {
+      showToast(`Account ${email} revoked.`);
+      setTimeout(() => location.reload(), 600);
+    } else {
+      const err = await res.json();
+      showToast(err.detail || "Error revoking account", "error");
+    }
+  } catch(e) {
+    showToast("Network error", "error");
+  }
+}
+
+function openConvertModal(leadId, clientName, service, budget) {
+  document.getElementById("convLeadId").value = leadId;
+  document.getElementById("convClientName").value = clientName;
+  document.getElementById("convProjTitle").value = `${clientName} - ${service}`;
+  document.getElementById("convBudget").value = budget;
+  document.getElementById("convertLeadModal").style.display = "flex";
+}
+
+function closeConvertModal() {
+  document.getElementById("convertLeadModal").style.display = "none";
+}
+
+async function handleConvertLead(e) {
+  e.preventDefault();
+  const lead_id = parseInt(document.getElementById("convLeadId").value);
+  const project_title = document.getElementById("convProjTitle").value.trim();
+  const manager_id = parseInt(document.getElementById("convManagerId").value);
+  const budget = document.getElementById("convBudget").value.trim();
+
+  try {
+    const res = await fetch("/api/v1/projects/convert-lead", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lead_id, project_title, manager_id, budget })
+    });
+    if (res.ok) {
+      showToast("Lead successfully converted into Client & Project! Manager notified.");
+      closeConvertModal();
+      setTimeout(() => location.reload(), 800);
+    } else {
+      showToast("Error converting lead", "error");
+    }
+  } catch(err) {
+    showToast("Network error", "error");
+  }
+}
+
+async function updateLeadStatus(enquiryId, newStatus) {
+  try {
+    const res = await fetch(`/api/v1/enquiries/${enquiryId}/status`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: newStatus, assigned_to: "{{ user.full_name }}" })
+    });
+    if (res.ok) {
+      showToast(`Lead #${enquiryId} stage updated to ${newStatus}`);
+    } else {
+      showToast("Error updating status", "error");
+    }
+  } catch(e) {
+    showToast("Network error", "error");
+  }
+}
+
+async function handleDocIngest(e) {
+  e.preventDefault();
+  const kbId = document.getElementById("ingestKbId").value;
+  const title = document.getElementById("ingestDocTitle").value.trim();
+  const content = document.getElementById("ingestDocContent").value.trim();
+  
+  try {
+    const res = await fetch(`/api/v1/knowledge-bases/${kbId}/documents?title=${encodeURIComponent(title)}&content=${encodeURIComponent(content)}`, {
+      method: "POST"
+    });
+    if (res.ok) {
+      showToast("Document indexed successfully with chunks!");
+      document.getElementById("ingest-doc-form").reset();
+    } else {
+      showToast("Failed to index document", "error");
+    }
+  } catch(err) {
+    showToast("Network error during document ingestion", "error");
+  }
+}
+async function assignClientManager(clientId) {
+  const select = document.getElementById(`clientManagerSelect-${clientId}`);
+  if (!select) return;
+  const managerId = parseInt(select.value);
+  if (!managerId) {
+    showToast("Please choose a Manager to assign", "error");
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/v1/projects/clients/${clientId}/assign-manager`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ manager_id: managerId })
+    });
+    if (res.ok) {
+      showToast("Client successfully assigned to Manager! Notification sent.");
+      setTimeout(() => location.reload(), 700);
+    } else {
+      const data = await res.json();
+      showToast(data.detail || "Error assigning manager", "error");
+    }
+  } catch(e) {
+    showToast("Network error assigning manager", "error");
+  }
+}
+</script>
+{% endblock %}

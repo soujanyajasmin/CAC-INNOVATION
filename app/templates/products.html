@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}AI Products & Innovation | CTRL ALT CRAC INNOVATIONS{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge badge-purple">AI Products & Platforms</span>
+      <h2>Configurable Enterprise Intelligence Products</h2>
+      <p>Reusable architectures engineered once and tailored for multi-industry deployment.</p>
+    </div>
+
+    <div class="grid-2" style="margin-bottom: 4rem;">
+      <div class="card">
+        <div class="card-icon">💬</div>
+        <h3 class="card-title">CAC Website AI Assistant</h3>
+        <p class="card-text">
+          An embeddable, branded conversational widget that ingests approved company documentation, answers client queries 24/7, scores inbound leads, and integrates into CRM workflows.
+        </p>
+        <ul class="card-deliverables">
+          <li>Zero-latency lightweight JavaScript embed</li>
+          <li>Real-time RAG context retrieval</li>
+          <li>Automated lead qualification & scoring</li>
+          <li>Custom styling aligned to brand identity</li>
+        </ul>
+        <div style="margin-top: 1.5rem;">
+          <button onclick="document.getElementById('cacChatToggle').click()" class="btn btn-primary btn-sm">
+            Launch Live Demo Widget
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">📄</div>
+        <h3 class="card-title">Enterprise Document Intelligence (RAG)</h3>
+        <p class="card-text">
+          Connect your PDFs, policy manuals, scanned records, and knowledge repositories into a secure vector search index with precise citation attribution and strict tenant authorization.
+        </p>
+        <ul class="card-deliverables">
+          <li>Automated PDF, DOCX & text chunking</li>
+          <li>Cosine vector & BM25 hybrid ranking</li>
+          <li>Exact page & paragraph source citations</li>
+          <li>Cryptographically isolated tenant storage</li>
+        </ul>
+        <div style="margin-top: 1.5rem;">
+          <a href="#interactive-rag" class="btn btn-secondary btn-sm">Try Interactive RAG Search Below &darr;</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🤖</div>
+        <h3 class="card-title">Autonomous Workflow Agents</h3>
+        <p class="card-text">
+          Multi-step intelligent agents equipped with sandboxed tools to query internal APIs, synchronize records, generate structured analytics, and flag anomalies with human-in-the-loop checkpoints.
+        </p>
+        <ul class="card-deliverables">
+          <li>Configurable agent goals and instructions</li>
+          <li>Approved tool schemas and execution limits</li>
+          <li>Mandatory approval gates for consequential actions</li>
+          <li>Tamper-evident audit logging</li>
+        </ul>
+        <div style="margin-top: 1.5rem;">
+          <a href="/contact" class="btn btn-secondary btn-sm">Request Agent Deployment &rarr;</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h3 class="card-title">Executive Copilot & Decision Engine</h3>
+        <p class="card-text">
+          A centralized analytics copilot that connects to operational SQL databases and spreadsheets, allowing founders and executives to query performance metrics in plain English.
+        </p>
+        <ul class="card-deliverables">
+          <li>Natural language to SQL query generation</li>
+          <li>Visual charts and real-time metric extraction</li>
+          <li>Role-based query restriction safeguards</li>
+          <li>Exportable weekly briefing summaries</li>
+        </ul>
+        <div style="margin-top: 1.5rem;">
+          <a href="/contact" class="btn btn-secondary btn-sm">Request Demo &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Interactive RAG Demo Box -->
+    <div class="card" id="interactive-rag" style="border-color: var(--border-glow); background: rgba(14, 19, 34, 0.95);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div>
+          <span class="badge badge-cyan">Live Interactive Sandbox</span>
+          <h3 style="font-size: 1.4rem; color: #fff; margin-top: 0.35rem;">Test CAC RAG Document Intelligence</h3>
+        </div>
+        <span class="badge badge-green">Connected: Public KB</span>
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 1.25rem;">
+        Query the active CTRL ALT CRAC INNOVATIONS knowledge base in real-time. The engine will chunk, score relevance, and synthesize a response with cited source passages.
+      </p>
+
+      <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
+        <input type="text" id="ragDemoInput" class="form-control" placeholder="e.g. What is the architecture blueprint and delivery model of CAC Innovation?" value="What is the architecture blueprint and delivery model of CAC Innovation?" />
+        <button id="ragDemoBtn" class="btn btn-primary" style="white-space: nowrap;">Run Semantic Retrieval</button>
+      </div>
+
+      <div id="ragDemoResult" style="display: none; background: rgba(7, 9, 14, 0.9); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem; margin-top: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <strong style="color: #22d3ee; font-size: 0.9rem;">Synthesized Answer:</strong>
+          <span id="ragLatency" class="badge badge-purple" style="font-size: 0.7rem;">0ms</span>
+        </div>
+        <p id="ragAnswerText" style="color: #f1f5f9; font-size: 0.92rem; line-height: 1.6; margin-bottom: 1rem;"></p>
+        
+        <div style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.75rem;">
+          <span style="font-size: 0.75rem; text-transform: uppercase; color: #a78bfa; font-weight: 700;">Retrieved Source Citations:</span>
+          <div id="ragSourcesList" style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.getElementById("ragDemoBtn").addEventListener("click", async () => {
+  const query = document.getElementById("ragDemoInput").value.trim();
+  if (!query) return;
+
+  const btn = document.getElementById("ragDemoBtn");
+  const resBox = document.getElementById("ragDemoResult");
+  const ansText = document.getElementById("ragAnswerText");
+  const latencyBadge = document.getElementById("ragLatency");
+  const sourcesList = document.getElementById("ragSourcesList");
+
+  btn.disabled = true;
+  btn.innerText = "Querying Vector Index...";
+
+  try {
+    const res = await fetch("/api/v1/knowledge-bases/query", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query: query, top_k: 2 })
+    });
+    const data = await res.json();
+    
+    ansText.innerText = data.answer;
+    latencyBadge.innerText = `${data.latency_ms} ms | Model: ${data.model_used}`;
+    
+    sourcesList.innerHTML = "";
+    if (data.sources && data.sources.length > 0) {
+      data.sources.forEach(s => {
+        const item = document.createElement("div");
+        item.style.cssText = "background: rgba(255,255,255,0.03); padding: 0.6rem; border-radius: 6px; font-size: 0.8rem; border-left: 2px solid #06b6d4;";
+        item.innerHTML = `<strong style="color: #fff;">📄 ${s.doc_title}</strong> (Score: ${s.score})<br/><span style="color: #94a3b8;">"${s.text}"</span>`;
+        sourcesList.appendChild(item);
+      });
+    } else {
+      sourcesList.innerHTML = "<span style='color:#94a3b8; font-size:0.8rem;'>No high-scoring passages matched.</span>";
+    }
+
+    resBox.style.display = "block";
+  } catch (e) {
+    alert("Error performing RAG query");
+  } finally {
+    btn.disabled = false;
+    btn.innerText = "Run Semantic Retrieval";
+  }
+});
+</script>
+{% endblock %}

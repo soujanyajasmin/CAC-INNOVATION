@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block title %}Developer & Senior Engineer Workspace | CTRL ALT CRAC INNOVATIONS{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: 3rem;">
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <span class="badge badge-cyan">Engineering & Development</span>
+          <span class="badge badge-purple">{{ user.title or 'Senior AI Engineer' }}</span>
+        </div>
+        <h2 style="font-size: 2rem; color: #fff; margin-top: 0.25rem;">Developer Workspace: {{ user.full_name }}</h2>
+        <p style="color: var(--text-muted); font-size: 0.88rem;">Assigned development modules, PR submissions, and intern mentorship.</p>
+      </div>
+
+      <div>
+        <a href="#delegateInternSection" class="btn btn-secondary btn-sm">+ Delegate Subtask to Intern</a>
+      </div>
+    </div>
+
+    <!-- My Assigned Tasks -->
+    <div class="card" style="margin-bottom: 2.5rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div>
+          <h3 style="font-size: 1.3rem; color: #fff;">My Assigned Tasks</h3>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">Active core modules assigned to you</p>
+        </div>
+        <span class="badge badge-purple">{{ my_tasks|length }} Tasks</span>
+      </div>
+
+      {% if my_tasks %}
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Task</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>GitHub PR / Branch</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in my_tasks %}
+            <tr>
+              <td>
+                <div style="font-weight: 600; color: #fff;">{{ t.title }}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">{{ t.description }}</div>
+              </td>
+              <td>
+                <span class="badge {% if t.priority == 'Critical' %}badge-amber{% elif t.priority == 'High' %}badge-purple{% else %}badge-cyan{% endif %}" style="font-size: 0.65rem;">
+                  {{ t.priority }}
+                </span>
+              </td>
+              <td>
+                <span class="badge {% if t.status in ['Approved', 'Completed'] %}badge-green{% elif t.status == 'Under Review' %}badge-amber{% else %}badge-cyan{% endif %}" style="font-size: 0.65rem;">
+                  {{ t.status }}
+                </span>
+              </td>
+              <td>
+                {% if t.pr_url %}
+                <a href="{{ t.pr_url }}" target="_blank" style="color: #22d3ee; font-size: 0.82rem; text-decoration: underline;">
+                  PR Link &rarr;
+                </a>
+                {% else %}
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Branch: {{ t.branch_name or 'feature' }}</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if t.status not in ['Approved', 'Completed'] %}
+                <button class="btn btn-primary btn-sm" onclick="openSubmitModal({{ t.id }}, '{{ t.title }}')">
+                  Submit Work &rarr;
+                </button>
+                {% else %}
+                <span style="color: #34d399; font-size: 0.8rem;">✓ Approved</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <p style="color: var(--text-muted); font-size: 0.9rem;">No active development tasks assigned at this moment.</p>
+      {% endif %}
+    </div>
+
+    <!-- Delegate Subtask to Intern & Developer AI Copilot -->
+    <div class="grid-2" style="align-items: start; margin-bottom: 2.5rem;">
+      <!-- Delegate Subtask -->
+      <div class="card" id="delegateInternSection">
+        <h3 style="font-size: 1.3rem; color: #fff; margin-bottom: 0.5rem;">Delegate Subtask to Intern</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">
+          Assign supervised subtasks to Interns with clear acceptance criteria.
+        </p>
+
+        <form onsubmit="handleDelegateTask(event)">
+          <div class="form-group">
+            <label class="form-label">Project</label>
+            <select id="delProjectId" class="form-select" required>
+              {% for p in projects %}
+              <option value="{{ p.id }}">{{ p.title }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Subtask Title *</label>
+            <input type="text" id="delTitle" class="form-control" required placeholder="e.g. Write pytest unit tests for vector normalization" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Acceptance Rubric & Instructions *</label>
+            <textarea id="delDesc" class="form-control" required placeholder="Describe expected output, test criteria, and edge cases to handle..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Assign To Intern *</label>
+            <select id="delInternId" class="form-select" required>
+              {% for intern in interns %}
+              <option value="{{ intern.id }}">{{ intern.full_name }} (Intern)</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-cyan btn-sm" style="width: 100%;">
+            Delegate Subtask &rarr;
+          </button>
+        </form>
+      </div>
+
+      <!-- Developer AI Copilot -->
+      <div class="card" style="border-color: var(--border-glow);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <span class="badge badge-purple">Developer AI Copilot</span>
+          <span class="badge badge-green">Ready</span>
+        </div>
+        <h3 style="font-size: 1.3rem; color: #fff; margin-bottom: 0.5rem;">Code Review & Unit Test Assistant</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">
+          Generate test cases, check code for security boundaries, and review intern PRs.
+        </p>
+
+        <div class="form-group">
+          <textarea id="devAiPrompt" class="form-control" style="min-height: 80px;" placeholder="e.g. Generate pytest test cases for multi-tenant document extraction..."></textarea>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="runDevAi()" style="width: 100%;">
+          Generate Test Cases / Code Analysis &rarr;
+        </button>
+
+        <div id="devAiOutput" style="display: none; background: rgba(7, 9, 14, 0.9); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-top: 1rem; font-size: 0.85rem; color: #f1f5f9; line-height: 1.6; white-space: pre-wrap;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal for Submitting Task Work -->
+<div id="submitWorkModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+  <div class="card" style="max-width: 500px; width: 90%; border-color: var(--border-glow);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h3 style="font-size: 1.25rem; color: #fff;" id="modalTaskTitle">Submit Task Work</h3>
+      <button onclick="closeSubmitModal()" style="background: none; border: none; color: #94a3b8; font-size: 1.2rem; cursor: pointer;">&times;</button>
+    </div>
+    <form onsubmit="handleWorkSubmit(event)">
+      <input type="hidden" id="modalTaskId" />
+      <div class="form-group">
+        <label class="form-label">GitHub Pull Request URL *</label>
+        <input type="url" id="modalPrUrl" class="form-control" required placeholder="https://github.com/cac-innovations/repo/pull/24" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Git Branch Name</label>
+        <input type="text" id="modalBranch" class="form-control" placeholder="feature/vector-store" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Implementation Notes & Test Output *</label>
+        <textarea id="modalNotes" class="form-control" required placeholder="All unit tests passed. Code formatted with ruff. Ready for manager merge review."></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width: 100%;">
+        Submit For Review &rarr;
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function openSubmitModal(taskId, title) {
+  document.getElementById("modalTaskId").value = taskId;
+  document.getElementById("modalTaskTitle").innerText = `Submit: ${title}`;
+  document.getElementById("submitWorkModal").style.display = "flex";
+}
+
+function closeSubmitModal() {
+  document.getElementById("submitWorkModal").style.display = "none";
+}
+
+async function handleWorkSubmit(e) {
+  e.preventDefault();
+  const taskId = document.getElementById("modalTaskId").value;
+  const pr_url = document.getElementById("modalPrUrl").value.trim();
+  const branch_name = document.getElementById("modalBranch").value.trim() || null;
+  const submission_notes = document.getElementById("modalNotes").value.trim();
+
+  try {
+    const res = await fetch(`/api/v1/projects/tasks/${taskId}/submit`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pr_url, branch_name, submission_notes })
+    });
+    if (res.ok) {
+      showToast("Work submitted for manager review!");
+      closeSubmitModal();
+      setTimeout(() => location.reload(), 700);
+    } else {
+      showToast("Error submitting work", "error");
+    }
+  } catch(err) {
+    showToast("Network error", "error");
+  }
+}
+
+async function handleDelegateTask(e) {
+  e.preventDefault();
+  const project_id = parseInt(document.getElementById("delProjectId").value);
+  const title = document.getElementById("delTitle").value.trim();
+  const description = document.getElementById("delDesc").value.trim();
+  const assigned_to_id = parseInt(document.getElementById("delInternId").value);
+
+  try {
+    const res = await fetch("/api/v1/projects/tasks", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ project_id, title, description, assigned_to_id, priority: "Medium" })
+    });
+    if (res.ok) {
+      showToast("Subtask delegated to intern!");
+      setTimeout(() => location.reload(), 700);
+    } else {
+      showToast("Failed to delegate task", "error");
+    }
+  } catch(err) {
+    showToast("Network error delegating task", "error");
+  }
+}
+
+async function runDevAi() {
+  const prompt = document.getElementById("devAiPrompt").value.trim();
+  if (!prompt) return;
+  const out = document.getElementById("devAiOutput");
+  out.style.display = "block";
+  out.innerText = "Generating test cases & technical guidance...";
+
+  try {
+    const res = await fetch("/api/v1/agents/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: prompt, agent_code: "website_support" })
+    });
+    const data = await res.json();
+    out.innerText = data.reply;
+  } catch(e) {
+    out.innerText = "Error contacting Developer Copilot.";
+  }
+}
+</script>
+{% endblock %}

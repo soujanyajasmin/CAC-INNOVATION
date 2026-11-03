@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}CTRL ALT CRAC INNOVATIONS | Next-Gen AI Solutions{% endblock %}</title>
+  <link rel="icon" type="image/jpeg" href="/static/images/logo.jpeg" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <!-- Navigation Header -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="/" class="brand-logo">
+        <img src="/static/images/logo.jpeg" alt="CTRL ALT CRAC INNOVATIONS" />
+        <div class="brand-title">
+          <span class="main-name">CAC INNOVATION</span>
+          <span class="sub-name">CTRL ALT CRAC INNOVATIONS</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="/" class="nav-link">Home</a></li>
+        <li><a href="/about" class="nav-link">About</a></li>
+        <li><a href="/services" class="nav-link">Services</a></li>
+        <li><a href="/industries" class="nav-link">Industries</a></li>
+        <li><a href="/products" class="nav-link">AI Products</a></li>
+        <li><a href="/portfolio" class="nav-link">Portfolio</a></li>
+        <li><a href="/training" class="nav-link">Internships</a></li>
+        <li><a href="/contact" class="nav-link">Contact</a></li>
+      </ul>
+
+      <div class="nav-cta">
+        {% if user and user.role %}
+          {% if user.role.name == 'super_admin' %}
+            <a href="/ceo" class="btn btn-secondary btn-sm" style="border-color: #f59e0b; color: #fbbf24;">👑 CEO Portal</a>
+            <a href="/admin" class="btn btn-secondary btn-sm">Admin Portal</a>
+          {% elif user.role.name == 'admin' %}
+            <a href="/admin" class="btn btn-secondary btn-sm">Admin Portal</a>
+          {% elif user.role.name == 'manager' %}
+            <a href="/manager" class="btn btn-secondary btn-sm" style="border-color: #f59e0b; color: #fbbf24;">Manager Portal</a>
+          {% elif user.role.name == 'employee' %}
+            <a href="/employee" class="btn btn-secondary btn-sm" style="border-color: #06b6d4; color: #67e8f9;">Dev Portal</a>
+          {% elif user.role.name == 'client' %}
+            <a href="/client" class="btn btn-secondary btn-sm">Client Portal</a>
+          {% elif user.role.name == 'intern' %}
+            <a href="/intern" class="btn btn-secondary btn-sm">Intern Portal</a>
+          {% endif %}
+          <button onclick="handleLogout()" class="btn btn-secondary btn-sm" style="border-color: rgba(239, 68, 68, 0.4); color: #fca5a5;">Logout</button>
+        {% else %}
+          <a href="/login" class="btn btn-secondary btn-sm">Sign In</a>
+          <a href="/contact" class="btn btn-primary btn-sm">Request Quote</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body Content -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="brand-logo" style="margin-bottom: 1rem;">
+            <img src="/static/images/logo.jpeg" alt="CAC Logo" style="height: 38px; width: 38px;" />
+            <div class="brand-title">
+              <span class="main-name">CTRL ALT CRAC INNOVATIONS</span>
+              <span class="sub-name">CAC INNOVATION</span>
+            </div>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.88rem; max-width: 320px; line-height: 1.6;">
+            Started in 2021, CTRL ALT CRAC INNOVATIONS designs, develops, and deploys production-grade artificial intelligence, autonomous agent workflows, and document intelligence platforms for visionary enterprises.
+          </p>
+          <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <span class="badge badge-purple">Est. 2021</span>
+            <span class="badge badge-cyan">FastAPI</span>
+            <span class="badge badge-green">PyTorch</span>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Core Offerings</h4>
+          <ul>
+            <li><a href="/services">Machine Learning & Vision</a></li>
+            <li><a href="/services">Generative AI & RAG</a></li>
+            <li><a href="/services">Autonomous AI Agents</a></li>
+            <li><a href="/services#ai-cybersecurity-threat-intelligence">Cyber Security & AI Defense</a></li>
+            <li><a href="/products">Enterprise Document Copilot</a></li>
+            <li><a href="/products">Website AI Assistant</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Industries</h4>
+          <ul>
+            <li><a href="/industries">Healthcare & Clinical AI</a></li>
+            <li><a href="/industries">Finance & Anti-Fraud</a></li>
+            <li><a href="/industries#cybersecurity-defense">Cyber Security & Defense</a></li>
+            <li><a href="/industries">Education & Tutoring</a></li>
+            <li><a href="/industries">AgriTech & Crop Vision</a></li>
+            <li><a href="/industries">Smart Manufacturing</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Platform & Portals</h4>
+          <ul>
+            <li><a href="/ceo" style="color: #fbbf24;">👑 Executive CEO Gateway</a></li>
+            <li><a href="/admin">Admin Management</a></li>
+            <li><a href="/client">Client Tenant Portal</a></li>
+            <li><a href="/training">Internship Program & Tracks</a></li>
+            <li><a href="/docs" target="_blank">FastAPI OpenAPI Docs</a></li>
+            <li><a href="/contact">Book Consultation</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2021 &ndash; 2026 CTRL ALT CRAC INNOVATIONS (CAC INNOVATION). Started in 2021. All rights reserved.</div>
+        <div style="display: flex; gap: 1.5rem;">
+          <a href="/about" style="color: var(--text-muted);">Privacy & Data Isolation</a>
+          <a href="/about" style="color: var(--text-muted);">Security Blueprint</a>
+          <a href="/docs" style="color: var(--secondary-cyan);">API Specifications</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/static/js/main.js"></script>
+  <script src="/static/js/chat-widget.js"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

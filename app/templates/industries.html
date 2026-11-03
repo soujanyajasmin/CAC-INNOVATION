@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Industries & Use Cases | CTRL ALT CRAC INNOVATIONS{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge badge-purple">Target Sectors</span>
+      <h2>Industry Solutions & Governance Frameworks</h2>
+      <p>Domain-adapted AI with clinical validation, financial explainability, and regulatory compliance.</p>
+    </div>
+
+    <div class="grid-2">
+      {% for ind in industries %}
+      <div class="card" id="{{ ind.slug }}">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+          <h3 style="font-size: 1.4rem; color: #fff;">{{ ind.name }}</h3>
+          <span class="badge badge-cyan">Specialized Suite</span>
+        </div>
+        <p class="card-text" style="font-size: 1rem;">{{ ind.summary }}</p>
+
+        <div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1rem;">
+          <h4 style="font-size: 0.82rem; text-transform: uppercase; color: #22d3ee; margin-bottom: 0.5rem;">Potential Solutions:</h4>
+          <ul class="card-deliverables">
+            {% for sol in ind.solutions_json|from_json %}
+            <li>{{ sol }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div style="margin-top: 1rem; background: rgba(255, 255, 255, 0.03); border-radius: 8px; padding: 0.85rem; border: 1px dashed rgba(139, 92, 246, 0.3);">
+          <h4 style="font-size: 0.8rem; text-transform: uppercase; color: #fbbf24; margin-bottom: 0.35rem;">Governance & Oversight Safeguards:</h4>
+          <ul style="list-style: none; font-size: 0.82rem; color: var(--text-muted);">
+            {% for c in ind.considerations_json|from_json %}
+            <li style="margin-bottom: 0.25rem;">⚠️ {{ c }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <a href="/contact?industry={{ ind.name }}" class="btn btn-secondary btn-sm" style="width: 100%;">
+            Request an Industry Solution for {{ ind.name }} &rarr;
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

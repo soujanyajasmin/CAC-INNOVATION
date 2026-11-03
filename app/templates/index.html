@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+
+{% block title %}CTRL ALT CRAC INNOVATIONS | Next-Gen AI Solutions & Autonomous Systems{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-content">
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; align-items: center; flex-wrap: wrap;">
+        <span class="badge badge-purple">Enterprise AI Solutions</span>
+        <span class="badge badge-green">Started in 2021</span>
+        <span class="badge badge-cyan">FastAPI + SQLite3</span>
+      </div>
+      <h1>
+        Intelligent Software & <span class="hero-highlight">Autonomous AI Systems</span> for Modern Business.
+      </h1>
+      <p class="hero-description">
+        Started in 2021, CTRL ALT CRAC INNOVATIONS delivers custom AI applications, multi-agent workflows, and enterprise document intelligence. We turn complex data into verified operational outcomes.
+      </p>
+      <div class="hero-actions">
+        <a href="/contact" class="btn btn-primary">Request a Consultation</a>
+        <a href="/products" class="btn btn-secondary">Explore AI Products</a>
+        <button onclick="document.getElementById('cacChatToggle').click()" class="btn btn-cyan" style="gap: 0.4rem;">
+          💬 Launch CAC Copilot
+        </button>
+      </div>
+
+      <div style="margin-top: 2.5rem; display: flex; gap: 2rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1.5rem; flex-wrap: wrap;">
+        <div>
+          <div style="font-size: 1.4rem; font-weight: 800; color: #fff;">2021</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);">Founded & Operating</div>
+        </div>
+        <div>
+          <div style="font-size: 1.4rem; font-weight: 800; color: var(--secondary-cyan);">9+</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);">AI Core Disciplines</div>
+        </div>
+        <div>
+          <div style="font-size: 1.4rem; font-weight: 800; color: var(--primary-purple);">7</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);">Target Industries</div>
+        </div>
+        <div>
+          <div style="font-size: 1.4rem; font-weight: 800; color: #10b981;">&lt; 35ms</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);">Average API Latency</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-cube-wrap">
+        <img src="/static/images/logo.jpeg" alt="CTRL ALT CRAC INNOVATIONS Logo" />
+        <div class="floating-stat stat-1">
+          <div style="font-size: 1.2rem;">⚡</div>
+          <div>
+            <div class="stat-value">99.2%</div>
+            <div class="stat-label">Model Accuracy</div>
+          </div>
+        </div>
+        <div class="floating-stat stat-2">
+          <div style="font-size: 1.2rem;">🛡️</div>
+          <div>
+            <div class="stat-value">Tenant-Isolated</div>
+            <div class="stat-label">RAG & Agent Guardrails</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Three Pillars Section -->
+<section class="section" style="background: rgba(10, 14, 24, 0.4); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge badge-purple">Three Pillars</span>
+      <h2>Our Strategic Business Architecture</h2>
+      <p>A unified foundation designed for high-impact commercial delivery, reusable intellectual property, and continuous engineering talent development.</p>
+    </div>
+
+    <div class="grid-3">
+      <div class="card pillar-card">
+        <div class="card-icon">⚡</div>
+        <h3 class="card-title">AI Solutions & Services</h3>
+        <p class="card-text">
+          Primary enterprise client delivery: custom computer vision, machine learning, NLP, deep learning pipelines, and robust FastAPI backend integration.
+        </p>
+        <ul class="card-deliverables">
+          <li>Custom ML & Statistical Modeling</li>
+          <li>Vision & Defect Inspection</li>
+          <li>Enterprise API Architecture</li>
+        </ul>
+        <a href="/services" class="btn btn-secondary btn-sm" style="margin-top: 1rem; width: 100%;">View Services &rarr;</a>
+      </div>
+
+      <div class="card pillar-card">
+        <div class="card-icon">🤖</div>
+        <h3 class="card-title">AI Products & Innovation</h3>
+        <p class="card-text">
+          Configurable, modular software products: embeddable website assistants, multi-tenant document intelligence, and autonomous agent workflows.
+        </p>
+        <ul class="card-deliverables">
+          <li>Website AI Assistant Copilot</li>
+          <li>RAG Document Intelligence</li>
+          <li>Human-in-the-Loop Agents</li>
+        </ul>
+        <a href="/products" class="btn btn-secondary btn-sm" style="margin-top: 1rem; width: 100%;">Explore Products &rarr;</a>
+      </div>
+
+      <div class="card pillar-card">
+        <div class="card-icon">🎓</div>
+        <h3 class="card-title">Research & Training</h3>
+        <p class="card-text">
+          Building elite technical capability through structured 5-track intern fellowships, applied prototype evaluations, and algorithmic benchmarking.
+        </p>
+        <ul class="card-deliverables">
+          <li>5-Track Specialization Fellowship</li>
+          <li>Automated Rubric Code Reviews</li>
+          <li>Applied AI Experimentation</li>
+        </ul>
+        <a href="/training" class="btn btn-secondary btn-sm" style="margin-top: 1rem; width: 100%;">Fellowship Program &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Services Grid -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge badge-cyan">Full-Spectrum Capabilities</span>
+      <h2>Enterprise AI Services Catalogue</h2>
+      <p>From mathematical modeling to production cloud deployment, we deliver verifiable value without hyperbole.</p>
+    </div>
+
+    <div class="grid-3">
+      {% for s in services %}
+      <div class="card">
+        <div class="card-icon">
+          {% if s.slug == 'ai-machine-learning' %}📈
+          {% elif s.slug == 'deep-learning-computer-vision' %}👁️
+          {% elif s.slug == 'nlp-generative-ai' %}🧠
+          {% elif s.slug == 'rag-document-intelligence' %}📄
+          {% elif s.slug == 'ai-agent-development' %}🤖
+          {% elif s.slug == 'ai-chatbot-development' %}💬
+          {% elif s.slug == 'ai-integration-automation' %}⚙️
+          {% elif 'cyber' in s.slug %}🛡️
+          {% else %}🚀{% endif %}
+        </div>
+        <h3 class="card-title">{{ s.title }}</h3>
+        <p class="card-text">{{ s.short_description }}</p>
+        <ul class="card-deliverables">
+          {% for deliv in s.deliverables|from_json %}
+            <li>{{ deliv }}</li>
+          {% endfor %}
+        </ul>
+        {% if s.example_outcome %}
+        <div class="card-outcome">
+          <strong>Outcome:</strong> {{ s.example_outcome }}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    <div style="text-align: center; margin-top: 2.5rem;">
+      <a href="/services" class="btn btn-secondary">Explore All Services &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- Industry Focus Section -->
+<section class="section" style="background: rgba(14, 19, 34, 0.4); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge badge-purple">Target Sectors</span>
+      <h2>Engineered for High-Stakes Industries</h2>
+      <p>We tailor safety controls, regulatory safeguards, and audit trails to the specific requirements of each domain.</p>
+    </div>
+
+    <div class="grid-3">
+      {% for ind in industries %}
+      <div class="card" style="padding: 1.75rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+          <h3 style="font-size: 1.15rem; color: #fff;">{{ ind.name }}</h3>
+          <span class="badge badge-purple" style="font-size: 0.65rem;">Active</span>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; margin-bottom: 1rem;">
+          {{ ind.summary }}
+        </p>
+        <div style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.75rem;">
+          <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--secondary-cyan); font-weight: 700;">Key Solutions:</span>
+          <ul class="card-deliverables" style="margin-top: 0.4rem;">
+            {% for sol in ind.solutions_json|from_json %}
+              {% if loop.index <= 2 %}
+              <li>{{ sol }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Featured Portfolio -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge badge-cyan">Proven Results</span>
+      <h2>Featured Engineering Case Studies</h2>
+      <p>Real-world architectures and measurable efficiency gains implemented for our enterprise partners.</p>
+    </div>
+
+    <div class="grid-3">
+      {% for p in portfolio %}
+      <div class="card">
+        <span class="badge badge-cyan" style="margin-bottom: 1rem;">{{ p.industry_name }}</span>
+        <h3 class="card-title">{{ p.title }}</h3>
+        <p class="card-text"><strong>Challenge:</strong> {{ p.challenge }}</p>
+        <p class="card-text"><strong>Solution:</strong> {{ p.solution }}</p>
+        
+        <div style="margin-top: 1rem;">
+          <div style="font-size: 0.78rem; text-transform: uppercase; color: #cbd5e1; font-weight: 700; margin-bottom: 0.5rem;">Verified Outcomes:</div>
+          <ul class="card-deliverables">
+            {% for outcome in p.outcomes_json|from_json %}
+              <li>{{ outcome }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div style="margin-top: 1.25rem; display: flex; gap: 0.35rem; flex-wrap: wrap;">
+          {% for tech in p.tech_stack_json|from_json %}
+            <span class="badge badge-purple" style="font-size: 0.68rem;">{{ tech }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Direct Consultation / Lead Qualification Section -->
+<section class="section" id="quote-section" style="background: linear-gradient(180deg, rgba(14, 19, 34, 0.7) 0%, rgba(7, 9, 14, 0.95) 100%); border-top: 1px solid var(--border-color);">
+  <div class="container">
+    <div class="grid-2" style="align-items: center;">
+      <div>
+        <span class="badge badge-purple">Get In Touch</span>
+        <h2 style="font-size: 2.4rem; font-weight: 800; margin: 1rem 0; line-height: 1.2;">
+          Ready to Architect Your <span class="hero-highlight">AI Advantage</span>?
+        </h2>
+        <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.7; margin-bottom: 1.5rem;">
+          Submit your requirements to receive an automated AI qualification score, preliminary architecture plan, and direct callback from a senior solutions architect.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <div style="display: flex; gap: 1rem; align-items: center;">
+            <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(139, 92, 246, 0.2); display: flex; align-items: center; justify-content: center; color: #a78bfa;">✓</div>
+            <div>
+              <div style="font-weight: 600; color: #fff;">Guaranteed Tenant Isolation</div>
+              <div style="font-size: 0.82rem; color: var(--text-muted);">Strict database boundary and private RAG partitions.</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 1rem; align-items: center;">
+            <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(6, 182, 212, 0.2); display: flex; align-items: center; justify-content: center; color: #22d3ee;">✓</div>
+            <div>
+              <div style="font-weight: 600; color: #fff;">Human-in-the-Loop Oversight</div>
+              <div style="font-size: 0.82rem; color: var(--text-muted);">Configurable approval gates for sensitive autonomous actions.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+        <h3 style="font-size: 1.35rem; margin-bottom: 1.25rem; color: #fff;">Request a Project Proposal</h3>
+        <form id="cac-enquiry-form">
+          <div class="form-group">
+            <label class="form-label">Full Name *</label>
+            <input type="text" name="name" class="form-control" required placeholder="Alex Mercer" />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Work Email *</label>
+              <input type="email" name="email" class="form-control" required placeholder="alex@company.com" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Company / Organization</label>
+              <input type="text" name="company" class="form-control" placeholder="Acme Global Inc" />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Service of Interest</label>
+              <select name="service_interest" class="form-select">
+                <option value="RAG & Document Intelligence">RAG & Document Intelligence</option>
+                <option value="Autonomous AI Agents">Autonomous AI Agents</option>
+                <option value="Computer Vision Pipeline">Computer Vision Pipeline</option>
+                <option value="Website AI Assistant">Website AI Assistant</option>
+                <option value="Custom AI Application">Custom AI Application</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Estimated Budget</label>
+              <select name="budget" class="form-select">
+                <option value="$5k - $15k">$5,000 - $15,000</option>
+                <option value="$15k - $30k">$15,000 - $30,000</option>
+                <option value="$30k - $75k">$30,000 - $75,000</option>
+                <option value="$75k+">$75,000+</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Project Objectives & Requirements *</label>
+            <textarea name="message" class="form-control" required placeholder="Tell us about the business problem, expected data sources, and timeline requirements..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%;">
+            Submit Proposal Request &rarr;
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
