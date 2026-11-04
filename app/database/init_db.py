@@ -76,6 +76,57 @@ def init_database(seed_demo: bool = False):
             db.commit()
             db.refresh(ceo_user)
 
+        # 2.1 Seed Complete Team Accounts (2 Managers, 4 Clients, 6 Developers, 12 Interns)
+        team_members_data = [
+            # --- 2 Managers ---
+            {"name": "Rajesh Sharma", "email": "manager1@cac-innovations.com", "pwd": "Manager@123", "title": "Senior Project Manager", "dept": "Software Development", "role": "manager", "tenant": None},
+            {"name": "Priya Verma", "email": "manager2@cac-innovations.com", "pwd": "Manager@123", "title": "Lead Project Manager", "dept": "Software Development", "role": "manager", "tenant": None},
+
+            # --- 4 Clients ---
+            {"name": "Vikram Reddy", "email": "client1@cac-innovations.com", "pwd": "Client@123", "title": "Product Owner", "dept": "External Client", "role": "client", "tenant": None},
+            {"name": "Ananya Patel", "email": "client2@cac-innovations.com", "pwd": "Client@123", "title": "Managing Director", "dept": "External Client", "role": "client", "tenant": None},
+            {"name": "Suresh Kumar", "email": "client3@cac-innovations.com", "pwd": "Client@123", "title": "Tech Lead", "dept": "External Client", "role": "client", "tenant": None},
+            {"name": "Meera Nair", "email": "client4@cac-innovations.com", "pwd": "Client@123", "title": "Vice President", "dept": "External Client", "role": "client", "tenant": None},
+
+            # --- 6 Software Developers ---
+            {"name": "Arjun Rao", "email": "dev1@cac-innovations.com", "pwd": "Dev@123", "title": "Software Lead", "dept": "Software Development", "role": "employee", "tenant": None},
+            {"name": "Kavya Joshi", "email": "dev2@cac-innovations.com", "pwd": "Dev@123", "title": "Senior Developer", "dept": "Software Development", "role": "employee", "tenant": None},
+            {"name": "Rohan Gupta", "email": "dev3@cac-innovations.com", "pwd": "Dev@123", "title": "Tech Lead", "dept": "Software Development", "role": "employee", "tenant": None},
+            {"name": "Sneha Kulkarni", "email": "dev4@cac-innovations.com", "pwd": "Dev@123", "title": "AI Engineer", "dept": "Software Development", "role": "employee", "tenant": None},
+            {"name": "Aditya Verma", "email": "dev5@cac-innovations.com", "pwd": "Dev@123", "title": "Full Stack Lead", "dept": "Software Development", "role": "employee", "tenant": None},
+            {"name": "Pooja Hegde", "email": "dev6@cac-innovations.com", "pwd": "Dev@123", "title": "Security Engineer", "dept": "Software Development", "role": "employee", "tenant": None},
+
+            # --- 12 Interns (2 per Developer) ---
+            {"name": "Rahul Deshmukh", "email": "intern1@cac-innovations.com", "pwd": "Intern@123", "title": "AI Fellow Intern", "dept": "AI R&D", "role": "intern", "tenant": None},
+            {"name": "Divya Agarwal", "email": "intern2@cac-innovations.com", "pwd": "Intern@123", "title": "AI Fellow Intern", "dept": "AI R&D", "role": "intern", "tenant": None},
+            {"name": "Kiran Kumar", "email": "intern3@cac-innovations.com", "pwd": "Intern@123", "title": "AI Fellow Intern", "dept": "AI R&D", "role": "intern", "tenant": None},
+            {"name": "Pooja Choudhary", "email": "intern4@cac-innovations.com", "pwd": "Intern@123", "title": "AI Fellow Intern", "dept": "AI R&D", "role": "intern", "tenant": None},
+            {"name": "Nikhil Saxena", "email": "intern5@cac-innovations.com", "pwd": "Intern@123", "title": "AI Fellow Intern", "dept": "AI R&D", "role": "intern", "tenant": None},
+            {"name": "Swati Mishra", "email": "intern6@cac-innovations.com", "pwd": "Intern@123", "title": "AI Fellow Intern", "dept": "AI R&D", "role": "intern", "tenant": None},
+            {"name": "Varun Tej", "email": "intern7@cac-innovations.com", "pwd": "Intern@123", "title": "AI Fellow Intern", "dept": "AI R&D", "role": "intern", "tenant": None},
+            {"name": "Bhavana Rao", "email": "intern8@cac-innovations.com", "pwd": "Intern@123", "title": "AI Fellow Intern", "dept": "AI R&D", "role": "intern", "tenant": None},
+            {"name": "Aakash Sharma", "email": "intern9@cac-innovations.com", "pwd": "Intern@123", "title": "AI Fellow Intern", "dept": "AI R&D", "role": "intern", "tenant": None},
+            {"name": "Ritu Sen", "email": "intern10@cac-innovations.com", "pwd": "Intern@123", "title": "AI Fellow Intern", "dept": "AI R&D", "role": "intern", "tenant": None},
+            {"name": "Manish Mehta", "email": "intern11@cac-innovations.com", "pwd": "Intern@123", "title": "AI Fellow Intern", "dept": "AI R&D", "role": "intern", "tenant": None},
+            {"name": "Kavita Chawla", "email": "intern12@cac-innovations.com", "pwd": "Intern@123", "title": "AI Fellow Intern", "dept": "AI R&D", "role": "intern", "tenant": None},
+        ]
+
+        for member in team_members_data:
+            user = db.query(User).filter(User.email == member["email"]).first()
+            if not user:
+                user = User(
+                    email=member["email"],
+                    hashed_password=get_password_hash(member["pwd"]),
+                    full_name=member["name"],
+                    title=member["title"],
+                    department=member["dept"],
+                    role_id=roles_map[member["role"]].id,
+                    tenant_id=member["tenant"],
+                    is_active=True
+                )
+                db.add(user)
+                db.commit()
+
         # 3. Seed Website Services (Platform Catalog)
         services_data = [
                 {
