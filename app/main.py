@@ -46,7 +46,7 @@ app.include_router(web.router)
 
 @app.on_event("startup")
 def startup_event():
-    init_database(seed_demo=False)
+    init_database(seed_demo=True)
 
 if __name__ == "__main__":
     import uvicorn

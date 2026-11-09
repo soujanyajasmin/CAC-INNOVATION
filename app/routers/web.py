@@ -1,5 +1,5 @@
 import json
-from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import APIRouter, Request, Depends, HTTPException, Form, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -132,7 +132,6 @@ def ceo_portal(request: Request, db: Session = Depends(get_db), user: User = Dep
     invoices = db.query(Invoice).all()
     audit_logs = db.query(AuditLog).order_by(AuditLog.created_at.desc()).limit(20).all()
 
-    # Calculate gross deal pipeline
     total_pipeline_val = sum(inv.amount for inv in invoices if inv.amount)
     for p in projects:
         try:
@@ -196,13 +195,12 @@ def admin_portal(request: Request, db: Session = Depends(get_db), user: User = D
         }
     )
 
-# 2. Manager Portal
+# 2. Manager Portal (GET)
 @router.get("/manager", response_class=HTMLResponse)
 def manager_portal(request: Request, db: Session = Depends(get_db), user: User = Depends(get_current_user_optional)):
     if not user or not user.role or user.role.name not in ["super_admin", "admin", "manager"]:
         return RedirectResponse(url="/login?msg=Please+log+in+as+Manager")
     
-    # Manager assigned clients & projects
     if user.role.name in ["super_admin", "admin"]:
         my_clients = db.query(Client).all()
         projects = db.query(Project).all()
@@ -213,7 +211,6 @@ def manager_portal(request: Request, db: Session = Depends(get_db), user: User =
     tasks_waiting_review = db.query(Task).filter(Task.status == "Under Review").all()
     all_tasks = db.query(Task).order_by(Task.due_date.asc()).all()
     
-    # Team members available for assignment (employees and interns)
     employees = db.query(User).join(User.role).filter(User.role.has(name="employee")).all()
     interns = db.query(User).join(User.role).filter(User.role.has(name="intern")).all()
     notifications = db.query(Notification).filter(Notification.user_id == user.id).order_by(Notification.created_at.desc()).limit(10).all()
@@ -224,7 +221,7 @@ def manager_portal(request: Request, db: Session = Depends(get_db), user: User =
         context={
             "user": user,
             "clients": my_clients,
-            "projects": projects,
+            "projects": projects,  # <--- Passes project list to Jinja2 dropdown loop
             "tasks_waiting_review": tasks_waiting_review,
             "all_tasks": all_tasks,
             "employees": employees,
@@ -232,6 +229,34 @@ def manager_portal(request: Request, db: Session = Depends(get_db), user: User =
             "notifications": notifications
         }
     )
+
+# 2.1 NEW: Manager Portal Form Submission (POST) - Permanently saves website inputs into SQLite DB[cite: 3, 7]
+@router.post("/manager/projects/add", response_class=HTMLResponse)
+def add_project_from_website(
+    request: Request,
+    title: str = Form(...),
+    description: str = Form(...),
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user_optional)
+):
+    if not user or not user.role or user.role.name not in ["super_admin", "admin", "manager"]:
+        return RedirectResponse(url="/login?msg=Unauthorized", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Instantiate model with website form input values
+    new_project = Project(
+        client_id=1,  
+        title=title,
+        description=description,
+        status="active"
+    )
+
+    # Permanently store changes into cac_innovations.db
+    db.add(new_project)
+    db.commit()
+    db.refresh(new_project)
+
+    # Redirect back to portal so Jinja2 re-renders with the newly saved database records
+    return RedirectResponse(url="/manager?success=ProjectCreated", status_code=status.HTTP_303_SEE_OTHER)
 
 # 3. Employee / Developer Portal
 @router.get("/employee", response_class=HTMLResponse)
@@ -292,7 +317,6 @@ def intern_portal(request: Request, db: Session = Depends(get_db), user: User = 
     if not user or not user.role or user.role.name not in ["intern", "employee", "manager", "super_admin", "admin"]:
         return RedirectResponse(url="/login?msg=Please+log+in+with+intern+account")
     
-    # Intern assigned tasks from projects
     my_tasks = db.query(Task).filter(Task.assigned_to_id == user.id).all()
     batches = db.query(InternBatch).all()
     module_tasks = db.query(InternTask).all()
