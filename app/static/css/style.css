@@ -222,7 +222,7 @@ a {
 
 /* Typography & Section Headers */
 .section {
-  padding: 5rem 0;
+  padding: 5.5rem 0 5rem 0;
 }
 
 .section-header {
@@ -248,7 +248,7 @@ a {
 
 /* Hero Section */
 .hero {
-  padding: 6.5rem 0 5rem 0;
+  padding: 7rem 0 5rem 0;
   position: relative;
 }
 
@@ -376,6 +376,14 @@ a {
   border-color: var(--border-glow);
   transform: translateY(-4px);
   box-shadow: 0 12px 30px rgba(124, 58, 237, 0.18);
+}
+
+/* Card Header and Badge Alignment (Targeted explicitly) */
+.card .card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .card-icon {
@@ -683,22 +691,35 @@ textarea.form-control {
   border-color: var(--primary-purple);
 }
 
-/* Footer */
-.footer {
+/* ==========================================================================
+   FOOTER STYLING & RESPONSIVE ALIGNMENT
+   ========================================================================== */
+
+footer, .footer {
   margin-top: auto;
   background: #05070a;
   border-top: 1px solid var(--border-color);
   padding: 4rem 0 2rem 0;
+  width: 100%;
 }
 
-.footer-grid {
+footer > div, .footer > div {
+  width: 90%;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.footer-grid, footer > div > div:first-child {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 3rem;
+  gap: 2.5rem;
   margin-bottom: 3rem;
+  align-items: start;
 }
 
-.footer-col h4 {
+.footer-col h4, 
+.footer-grid h4,
+footer h4 {
   font-size: 0.95rem;
   font-weight: 700;
   margin-bottom: 1.25rem;
@@ -707,25 +728,35 @@ textarea.form-control {
   letter-spacing: 0.05em;
 }
 
-.footer-col ul {
+.footer-col ul, 
+.footer-grid ul,
+footer ul {
   list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.footer-col ul li {
+.footer-col ul li, 
+.footer-grid ul li,
+footer ul li {
   margin-bottom: 0.65rem;
 }
 
-.footer-col ul li a {
+.footer-col ul li a, 
+.footer-grid ul li a,
+footer ul li a {
   color: var(--text-muted);
   font-size: 0.88rem;
   transition: var(--transition);
 }
 
-.footer-col ul li a:hover {
+.footer-col ul li a:hover, 
+.footer-grid ul li a:hover,
+footer ul li a:hover {
   color: #22d3ee;
 }
 
-.footer-bottom {
+.footer-bottom, footer > div > div:last-child {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -733,35 +764,173 @@ textarea.form-control {
   padding-top: 2rem;
   font-size: 0.82rem;
   color: var(--text-muted);
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-/* Responsive */
+.footer-bottom div:last-child, footer > div > div:last-child > div:last-child {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   RESPONSIVE MEDIA QUERIES
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .footer-grid, footer > div > div:first-child {
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 2rem;
+  }
+}
+
 @media (max-width: 900px) {
   .hero-grid {
     grid-template-columns: 1fr;
     text-align: center;
+    gap: 2.5rem;
   }
+
   .hero-actions {
     justify-content: center;
   }
-  .footer-grid {
-    grid-template-columns: 1fr 1fr;
+
+  .hero-visual {
+    margin-top: 1rem;
   }
-  .nav-links {
+
+  .footer-grid, footer > div > div:first-child {
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar, header {
+    padding: 1.25rem 0;
+  }
+
+  .nav-container, header > div {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .nav-links, header ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.85rem 1.25rem;
+    padding-top: 0.5rem;
+  }
+
+  .nav-links, header ul {
     display: none;
+  }
+
+  /* Fix header title and status badge alignment in portals on mobile */
+  section > div > div:first-child,
+  .intern-workspace-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  /* Force inline flex container to behave correctly on mobile */
+section .card > div[style*="display: flex"] {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+}
+
+section .card > div[style*="display: flex"] h3,
+section .card > div[style*="display: flex"] h2 {
+  margin-bottom: 0;
+  flex: 1;
+}
+
+  .section {
+    padding: 3.5rem 0 3rem 0;
+  }
+
+  .section-header h2 {
+    font-size: 1.8rem;
+  }
+
+  .grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .data-table {
+    min-width: 600px;
   }
 }
 
 @media (max-width: 600px) {
-  .footer-grid {
-    grid-template-columns: 1fr;
+  .container {
+    width: 95%;
+    padding: 0 0.5rem;
   }
+
   .hero-content h1 {
-    font-size: 2.3rem;
+    font-size: 2.1rem;
   }
+
+  .hero-description {
+    font-size: 1rem;
+  }
+
+  .card {
+    padding: 1.25rem;
+  }
+
+  .footer-grid, footer > div > div:first-child {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    text-align: left;
+  }
+
+  .footer-bottom, footer > div > div:last-child {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .footer-bottom div:last-child, footer > div > div:last-child > div:last-child {
+    justify-content: center;
+  }
+
   .cac-chat-window {
     right: 10px;
     width: calc(100vw - 20px);
     bottom: 85px;
+    height: 460px;
   }
+
+  .cac-chat-toggle {
+    bottom: 15px;
+    right: 15px;
+    width: 52px;
+    height: 52px;
+  }
+}
+
+/* Card Header alignment fix for Client Project Tasks */
+.card > div:first-child:has(.badge),
+.card .card-header {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100%;
 }
