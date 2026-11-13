@@ -23,7 +23,14 @@
         </div>
       </a>
 
-      <ul class="nav-links">
+      <!-- Hamburger Toggle Button -->
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle Navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
         <li><a href="/" class="nav-link">Home</a></li>
         <li><a href="/about" class="nav-link">About</a></li>
         <li><a href="/services" class="nav-link">Services</a></li>
@@ -32,9 +39,36 @@
         <li><a href="/portfolio" class="nav-link">Portfolio</a></li>
         <li><a href="/training" class="nav-link">Internships</a></li>
         <li><a href="/contact" class="nav-link">Contact</a></li>
+        
+        <!-- CTA buttons integrated inside nav-links for smooth mobile dropdown -->
+        <li class="nav-cta-item">
+          <div class="nav-cta" id="navCta">
+            {% if user and user.role %}
+              {% if user.role.name == 'super_admin' %}
+                <a href="/ceo" class="btn btn-secondary btn-sm" style="border-color: #f59e0b; color: #fbbf24;">👑 CEO Portal</a>
+                <a href="/admin" class="btn btn-secondary btn-sm">Admin Portal</a>
+              {% elif user.role.name == 'admin' %}
+                <a href="/admin" class="btn btn-secondary btn-sm">Admin Portal</a>
+              {% elif user.role.name == 'manager' %}
+                <a href="/manager" class="btn btn-secondary btn-sm" style="border-color: #f59e0b; color: #fbbf24;">Manager Portal</a>
+              {% elif user.role.name == 'employee' %}
+                <a href="/employee" class="btn btn-secondary btn-sm" style="border-color: #06b6d4; color: #67e8f9;">Dev Portal</a>
+              {% elif user.role.name == 'client' %}
+                <a href="/client" class="btn btn-secondary btn-sm">Client Portal</a>
+              {% elif user.role.name == 'intern' %}
+                <a href="/intern" class="btn btn-secondary btn-sm">Intern Portal</a>
+              {% endif %}
+              <button onclick="handleLogout()" class="btn btn-secondary btn-sm" style="border-color: rgba(239, 68, 68, 0.4); color: #fca5a5;">Logout</button>
+            {% else %}
+              <a href="/login" class="btn btn-secondary btn-sm">Sign In</a>
+              <a href="/contact" class="btn btn-primary btn-sm">Request Quote</a>
+            {% endif %}
+          </div>
+        </li>
       </ul>
 
-      <div class="nav-cta">
+      <!-- Desktop CTA Container -->
+      <div class="nav-cta" id="navCta">
         {% if user and user.role %}
           {% if user.role.name == 'super_admin' %}
             <a href="/ceo" class="btn btn-secondary btn-sm" style="border-color: #f59e0b; color: #fbbf24;">👑 CEO Portal</a>

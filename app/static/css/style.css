@@ -67,6 +67,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
 }
 
 .brand-logo {
@@ -132,6 +133,39 @@ a {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+}
+
+/* Hamburger Toggle Button Styling */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 21px;
+  padding: 0;
+  z-index: 1001;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background-color: var(--text-main);
+  border-radius: 2px;
+  transition: var(--transition);
+}
+
+.nav-toggle.active span:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+.nav-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+.nav-toggle.active span:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
 }
 
 /* Buttons */
@@ -356,8 +390,9 @@ a {
 
 .grid-2 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: start;
 }
 
 .card {
@@ -378,7 +413,6 @@ a {
   box-shadow: 0 12px 30px rgba(124, 58, 237, 0.18);
 }
 
-/* Card Header and Badge Alignment (Targeted explicitly) */
 .card .card-header {
   display: flex;
   align-items: center;
@@ -444,7 +478,6 @@ a {
   margin-top: 1rem;
 }
 
-/* Three Pillars Feature Section */
 .pillar-card {
   border-top: 3px solid var(--primary-purple);
 }
@@ -460,6 +493,7 @@ a {
 /* Forms */
 .form-group {
   margin-bottom: 1.25rem;
+  width: 100%;
 }
 
 .form-label {
@@ -468,6 +502,7 @@ a {
   font-weight: 600;
   color: #cbd5e1;
   margin-bottom: 0.45rem;
+  min-height: 2.5rem;
 }
 
 .form-control, .form-select {
@@ -491,6 +526,18 @@ a {
 textarea.form-control {
   min-height: 110px;
   resize: vertical;
+}
+
+/* Force equal 50/50 split on desktop contact form grid inputs */
+#cac-enquiry-form div[style*="grid-template-columns"] {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 1rem !important;
+  width: 100% !important;
+}
+
+#cac-enquiry-form div[style*="grid-template-columns"] > div {
+  width: 100% !important;
 }
 
 /* Tables */
@@ -775,8 +822,57 @@ footer ul li a:hover {
 }
 
 /* ==========================================================================
-   RESPONSIVE MEDIA QUERIES
+   RESPONSIVE MEDIA QUERIES & MOBILE HAMBURGER TOGGLE STYLES
    ========================================================================== */
+
+@media (min-width: 1108px) {
+  .nav-links .nav-cta-item {
+    display: none;
+  }
+}
+
+@media (max-width: 1107px) {
+  .nav-toggle {
+    display: flex;
+  }
+
+  .navbar > .container > .nav-cta {
+    display: none !important;
+  }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: rgba(13, 17, 29, 0.98);
+    backdrop-filter: blur(16px);
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 0;
+    gap: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+
+  .nav-links .nav-cta-item {
+    display: block;
+    margin-top: 0.5rem;
+  }
+
+  .nav-links .nav-cta {
+    display: flex !important;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
 
 @media (max-width: 1024px) {
   .footer-grid, footer > div > div:first-child {
@@ -787,17 +883,56 @@ footer ul li a:hover {
 
 @media (max-width: 900px) {
   .hero-grid {
-    grid-template-columns: 1fr;
-    text-align: center;
-    gap: 2.5rem;
+    grid-template-columns: 1fr !important;
+    text-align: center !important;
+    gap: 2.5rem !important;
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Center the 4 stats blocks wrapper inside the hero content */
+  .hero-content div[style*="display: flex"][style*="border-top"] {
+    justify-content: center !important;
+    text-align: center !important;
   }
 
   .hero-actions {
-    justify-content: center;
+    justify-content: center !important;
   }
 
   .hero-visual {
-    margin-top: 1rem;
+    width: 100% !important;
+    margin-top: 1.5rem !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero-cube-wrap {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 auto;
+  }
+
+  /* Center the floating stat card horizontally on mobile while keeping its inner look */
+  .floating-stat {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    margin: 0.75rem auto 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: left !important;
+    max-width: 100% !important;
   }
 
   .footer-grid, footer > div > div:first-child {
@@ -811,25 +946,10 @@ footer ul li a:hover {
     padding: 1.25rem 0;
   }
 
-  .nav-container, header > div {
-    flex-direction: column;
-    align-items: center;
-    gap: 1.25rem;
+  .grid-2 {
+    grid-template-columns: 1fr !important;
   }
 
-  .nav-links, header ul {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.85rem 1.25rem;
-    padding-top: 0.5rem;
-  }
-
-  .nav-links, header ul {
-    display: none;
-  }
-
-  /* Fix header title and status badge alignment in portals on mobile */
   section > div > div:first-child,
   .intern-workspace-header {
     display: flex;
@@ -838,20 +958,22 @@ footer ul li a:hover {
     gap: 0.75rem;
   }
 
-  /* Force inline flex container to behave correctly on mobile */
-section .card > div[style*="display: flex"] {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: nowrap;
-}
+  section .card > div[style*="display: flex"] {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
 
-section .card > div[style*="display: flex"] h3,
-section .card > div[style*="display: flex"] h2 {
-  margin-bottom: 0;
-  flex: 1;
-}
+  section .card > div[style*="display: flex"] h3,
+  section .card > div[style*="display: flex"] h2 {
+    margin-bottom: 0;
+    flex: 1 1 180px;
+    white-space: normal;
+    word-break: break-word;
+  }
 
   .section {
     padding: 3.5rem 0 3rem 0;
@@ -863,11 +985,6 @@ section .card > div[style*="display: flex"] h2 {
 
   .grid-3 {
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.25rem;
-  }
-
-  .grid-2 {
-    grid-template-columns: 1fr;
     gap: 1.25rem;
   }
 
@@ -883,11 +1000,15 @@ section .card > div[style*="display: flex"] h2 {
   }
 
   .hero-content h1 {
-    font-size: 2.1rem;
+    font-size: 2.1rem !important;
   }
 
   .hero-description {
-    font-size: 1rem;
+    font-size: 1rem !important;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
   }
 
   .card {
@@ -925,7 +1046,6 @@ section .card > div[style*="display: flex"] h2 {
   }
 }
 
-/* Card Header alignment fix for Client Project Tasks */
 .card > div:first-child:has(.badge),
 .card .card-header {
   display: flex !important;
